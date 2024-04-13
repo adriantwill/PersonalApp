@@ -8,17 +8,27 @@
 import Foundation
 
 class GameViewModel: ObservableObject{
-    @Published var livegames = [singlegame]()
     @Published var draftteams = [draftteam]()
     @Published var bigboards = [bigboard]()
     @Published var favgames = favgame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philidephia 76ers", hscore: "103", ascore: "104", time: "Thursday March 14 7:00PM", hrecord: "38-8", arecord: "39-7")
+    @Published var test: games
+    @Published var currdate = String()
+    init()
+    {
+        let series = series(win: 0, loss: 0)
+        let teamscore = teamscores(win: 0, loss: 0, series: series, linescore: [""], points: 0)
+        let scores = scores(visitors: teamscore, home: teamscore)
+        let teamid = teamid(id: 0, name: "", nickname: "", code: "", logo: "")
+        let team = teams(visitors: teamid, home: teamid)
+        let arena = arena(name: "", city: "", state: "")
+        let period = periods(current: 0, total: 0, endOfPeriod: true)
+        let stat = status(halftime: true, short: 0, long: "")
+        let dat = date(start: "")
+        let res = response(id: 0, league: "", season: 0, date: dat, stage: 0, status: stat, periods: period, arena: arena, teams: team, scores: scores, officials: [""])
+        let parms = parameters(date: "")
+        test = games(get: "", parameters: parms, errors: [""], results: 0, response: [res])
+    }
     func addummy() {
-        livegames.append(singlegame(home: "SAC", away: "LAL", homefull: "Sacramento Kings", awayfull: "Los Angeles Lakers", hscore: "101", ascore: "96", time: "Live"))
-        livegames.append(singlegame(home: "LAC", away: "MIL",  homefull: "Los Angeles Clippers", awayfull: "Milwaukee Bucks",hscore: "102", ascore: "97", time: "Live"))
-        livegames.append(singlegame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philidephia 76ers", hscore: "103",ascore: "98", time: "Live"))
-        livegames.append(singlegame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philidephia 76ers",hscore: "103", ascore: "98", time: "Live"))
-        livegames.append(singlegame(home: "SAC", away: "SAC", homefull: "Sacramento Kings", awayfull: "Sacramento Kings",hscore: "103", ascore: "98", time: "Live"))
-        livegames.append(singlegame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philidephia 76ers",hscore: "103", ascore: "98", time: "Live"))
         draftteams.append(draftteam(name: "Carolina Panthers", abrevname: "CAR", winloss: "2-15", sos: "0.0522"))
         draftteams.append(draftteam(name: "Washington Commanders", abrevname: "WAS", winloss: "3-14", sos: "0.0522"))
         draftteams.append(draftteam(name: "New England Patriots", abrevname: "NWE", winloss: "3-14", sos: "0.0522"))
@@ -35,7 +45,52 @@ class GameViewModel: ObservableObject{
         bigboards.append(bigboard(name: "Joe Alt", position: "OT", school: "Notre Dame"))
         bigboards.append(bigboard(name: "Dallas Turner", position: "LB", school: "Alabama"))
     }
+    func getJsonData() {
+        
+        
+        let semaphore = DispatchSemaphore (value: 0)
+
+        var request = URLRequest(url: URL(string: "https://v2.nba.api-sports.io/games?date=2024-04-13")!,timeoutInterval: Double.infinity)
+        request.addValue("a439e25a4b4de1897e5deab481669b4c", forHTTPHeaderField: "x-rapidapi-key")
+        request.addValue("v2.nba.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
+
+        request.httpMethod = "GET"
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Error making request: \(error.localizedDescription)")
+                return
+            }
+            guard let data = data else {
+                print(String(describing: error))
+                semaphore.signal()
+                return
+            }
+            do {
+                let decodedData = try JSONDecoder().decode(games.self, from: data)
+                self.test = decodedData
+                
+                
+            } catch {
+                print("error: \(error)")
+            }
+          //print(String(data: data, encoding: .utf8)!)
+          semaphore.signal()
+        }
+
+        task.resume()
+        semaphore.wait()
+    }
     
+    
+    func getDate(){
+        let currentDate = Date()
+        let oneDay = DateComponents(day: 1)
+        let dateFormatter = DateFormatter()
+        let tomorrow = Calendar.current.date(byAdding: oneDay, to: currentDate)
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        currdate = dateFormatter.string(from: tomorrow ?? currentDate)
+    }
 }
 
 
