@@ -6,17 +6,24 @@
 //
 
 import Foundation
+import MapKit
+import _MapKit_SwiftUI
+
 
 class GameViewModel: ObservableObject{
     @Published var draftteams = [draftteam]()
     @Published var bigboards = [bigboard]()
+    @Published var searchCity = "Seattle"
+    @Published var searchText = ""
     @Published var favgames = favgame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philidephia 76ers", hscore: "103", ascore: "104", time: "Thursday March 14 7:00PM", hrecord: "38-8", arecord: "39-7")
     @Published var test: games
     @Published var currdate = String()
+    @Published var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
+    @Published var stadiums = maplocations()
     init()
     {
         let series = series(win: 0, loss: 0)
-        let teamscore = teamscores(win: 0, loss: 0, series: series, linescore: [""], points: 0)
+        let teamscore = teamscores(win: 0, loss: 0, linescore: [""], points: 0)
         let scores = scores(visitors: teamscore, home: teamscore)
         let teamid = teamid(id: 0, name: "", nickname: "", code: "", logo: "")
         let team = teams(visitors: teamid, home: teamid)
@@ -26,7 +33,7 @@ class GameViewModel: ObservableObject{
         let dat = date(start: "")
         let res = response(id: 0, league: "", season: 0, date: dat, stage: 0, status: stat, periods: period, arena: arena, teams: team, scores: scores, officials: [""])
         let parms = parameters(date: "")
-        test = games(get: "", parameters: parms, errors: [""], results: 0, response: [res])
+        test = games(get: "", errors: [""], results: 0, response: [res])
     }
     func addummy() {
         draftteams.append(draftteam(name: "Carolina Panthers", abrevname: "CAR", winloss: "2-15", sos: "0.0522"))
@@ -91,6 +98,7 @@ class GameViewModel: ObservableObject{
         dateFormatter.dateFormat = "yyyy-MM-dd"
         currdate = dateFormatter.string(from: tomorrow ?? currentDate)
     }
+    
 }
 
 

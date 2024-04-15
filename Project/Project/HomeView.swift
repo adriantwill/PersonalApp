@@ -10,8 +10,6 @@ import SwiftData
 
 struct HomeView: View {
     @ObservedObject var gameVM = GameViewModel()
-    @Query(sort: \gamesdata.hname) var games: [gamesdata]
-    @Environment(\.modelContext) var context
     var body: some View {
         ScrollView {
             VStack {
@@ -51,7 +49,6 @@ struct HomeView: View {
                                         Text("\(index.teams.visitors.code)")
                                             .padding(.trailing, 20)
                                         Text("\(index.scores.visitors.points)")
-                                  
                                     }
 
                                     HStack {
@@ -176,13 +173,6 @@ struct HomeView: View {
         }
         .refreshable {
             gameVM.getJsonData()
-            for index in gameVM.test.response{
-                print(index.teams.visitors.name)
-                let test = gamesdata(hname: index.teams.home.name, aname: index.teams.visitors.name, hcode: index.teams.home.code, acode: index.teams.visitors.code, hscore: index.scores.home.points, ascore: index.scores.visitors.points)
-                print(test.acode)
-                context.insert(test)
-                print(context)
-            }
         }
     }
 }

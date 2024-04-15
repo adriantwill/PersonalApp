@@ -9,6 +9,12 @@ import Foundation
 import UIKit
 import SwiftData
 import SwiftUI
+import MapKit
+
+struct maplocations {
+    var warriors: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.768009, longitude: -122.387787)
+    var fortyniners: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.4033, longitude: -121.9694)
+}
 
 struct bigboard: Hashable {
     var name: String
@@ -65,9 +71,18 @@ class gamesdata {
     }
 }
 
+struct nfl: Decodable, Hashable {
+    var results: String
+    var response: [nflresponse]
+}
+
+struct nflresponse: Decodable, Hashable{
+    
+}
+
+
 struct games: Decodable, Hashable {
     var get: String
-    var parameters: parameters
     var errors: [String]
     var results: Int
     var response: [response]
@@ -141,7 +156,6 @@ struct scores: Decodable, Hashable{
 struct teamscores: Decodable, Hashable{
     var win: Int
     var loss: Int
-    var series: series
     var linescore: [String]
     var points: Int
 }
