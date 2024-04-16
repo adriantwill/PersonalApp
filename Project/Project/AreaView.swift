@@ -49,4 +49,5 @@ struct AreaView: View {
 
 #Preview {
     AreaView()
+    
 }

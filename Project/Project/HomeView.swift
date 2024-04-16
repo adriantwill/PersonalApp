@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct HomeView: View {
     @ObservedObject var gameVM = GameViewModel()
@@ -172,12 +171,11 @@ struct HomeView: View {
             }
         }
         .refreshable {
-            gameVM.getJsonData()
+            gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?date=2024-04-13", whichapi: 0)
         }
     }
 }
 
 #Preview {
     HomeView()
-        .modelContainer(for: gamesdata.self, inMemory: true)
 }

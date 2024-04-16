@@ -54,30 +54,37 @@ struct favgame {
 }
 
 @Model
-class gamesdata {
-    var hname: String
-    var aname: String
-    var hcode: String
-    var acode: String
-    var hscore: Int
-    var ascore: Int
-    init(hname: String, aname: String, hcode: String, acode: String, hscore: Int, ascore: Int) {
-        self.hname = hname
-        self.aname = aname
-        self.hcode = hcode
-        self.acode = acode
-        self.hscore = hscore
-        self.ascore = ascore
+class swiftstandings {
+    var name: String
+    var win: Int
+    var loss: Int
+    var ties: Int
+    init(name: String, win: Int, loss: Int, ties: Int) {
+        self.name = name
+        self.win = win
+        self.loss = loss
+        self.ties = ties
     }
 }
 
-struct nfl: Decodable, Hashable {
-    var results: String
+
+struct nflstandings: Decodable, Hashable {
+    var results: Int
     var response: [nflresponse]
 }
 
 struct nflresponse: Decodable, Hashable{
-    
+    var division: String
+    var position: Int
+    var team: nflteam
+    var won: Int
+    var lost: Int
+    var ties: Int
+}
+
+struct nflteam: Decodable, Hashable{
+    var id: Int
+    var name: String
 }
 
 
@@ -100,13 +107,8 @@ struct response: Decodable, Hashable{
     var stage: Int
     var status: status
     var periods: periods
-    var arena: arena
     var teams: teams
     var scores: scores
-    var officials: [String]
-    var timesTied: String?
-    var leadChanges: String?
-    var nuggest: String?
 }
 
 struct date: Decodable, Hashable{
@@ -126,13 +128,6 @@ struct periods: Decodable, Hashable{
     var current: Int
     var total: Int
     var endOfPeriod: Bool
-}
-
-struct arena: Decodable, Hashable{
-    var name: String
-    var city: String
-    var state: String
-    var country: String?
 }
 
 struct teams: Decodable, Hashable {
@@ -158,9 +153,4 @@ struct teamscores: Decodable, Hashable{
     var loss: Int
     var linescore: [String]
     var points: Int
-}
-
-struct series: Decodable, Hashable{
-    var win: Int
-    var loss: Int
 }

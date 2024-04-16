@@ -15,25 +15,26 @@ class GameViewModel: ObservableObject{
     @Published var bigboards = [bigboard]()
     @Published var searchCity = "Seattle"
     @Published var searchText = ""
-    @Published var favgames = favgame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philidephia 76ers", hscore: "103", ascore: "104", time: "Thursday March 14 7:00PM", hrecord: "38-8", arecord: "39-7")
+    @Published var favgames = favgame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philidephia 76ers", hscore: "103", ascore: "104", time: "April 14 7:00PM", hrecord: "38-8", arecord: "39-7")
     @Published var test: games
+    @Published var test1: nflstandings
     @Published var currdate = String()
     @Published var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @Published var stadiums = maplocations()
     init()
     {
-        let series = series(win: 0, loss: 0)
         let teamscore = teamscores(win: 0, loss: 0, linescore: [""], points: 0)
         let scores = scores(visitors: teamscore, home: teamscore)
         let teamid = teamid(id: 0, name: "", nickname: "", code: "", logo: "")
         let team = teams(visitors: teamid, home: teamid)
-        let arena = arena(name: "", city: "", state: "")
         let period = periods(current: 0, total: 0, endOfPeriod: true)
         let stat = status(halftime: true, short: 0, long: "")
         let dat = date(start: "")
-        let res = response(id: 0, league: "", season: 0, date: dat, stage: 0, status: stat, periods: period, arena: arena, teams: team, scores: scores, officials: [""])
-        let parms = parameters(date: "")
+        let res = response(id: 0, league: "", season: 0, date: dat, stage: 0, status: stat, periods: period, teams: team, scores: scores)
         test = games(get: "", errors: [""], results: 0, response: [res])
+        let nflteam = nflteam(id: 0, name: "")
+        let responsenfl = nflresponse(division: "", position: 0, team: nflteam, won: 0, lost: 0, ties: 0)
+        test1 = nflstandings(results: 0, response: [responsenfl])
     }
     func addummy() {
         draftteams.append(draftteam(name: "Carolina Panthers", abrevname: "CAR", winloss: "2-15", sos: "0.0522"))
@@ -52,14 +53,18 @@ class GameViewModel: ObservableObject{
         bigboards.append(bigboard(name: "Joe Alt", position: "OT", school: "Notre Dame"))
         bigboards.append(bigboard(name: "Dallas Turner", position: "LB", school: "Alabama"))
     }
-    func getJsonData() {
-        
+    func getJsonData(api: String, whichapi: Int) {
         
         let semaphore = DispatchSemaphore (value: 0)
 
-        var request = URLRequest(url: URL(string: "https://v2.nba.api-sports.io/games?date=2024-04-13")!,timeoutInterval: Double.infinity)
+        var request = URLRequest(url: URL(string: api)!,timeoutInterval: Double.infinity)
         request.addValue("a439e25a4b4de1897e5deab481669b4c", forHTTPHeaderField: "x-rapidapi-key")
-        request.addValue("v2.nba.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
+        if whichapi == 0{
+            request.addValue("v2.nba.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
+        } else if whichapi == 1 {
+            request.addValue("v1.american-football.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
+        }
+        
 
         request.httpMethod = "GET"
 
@@ -74,8 +79,13 @@ class GameViewModel: ObservableObject{
                 return
             }
             do {
-                let decodedData = try JSONDecoder().decode(games.self, from: data)
-                self.test = decodedData
+                if whichapi == 0{
+                    let decodedData = try JSONDecoder().decode(games.self, from: data)
+                    self.test = decodedData
+                } else if whichapi == 1{
+                    let decodedData = try JSONDecoder().decode(nflstandings.self, from: data)
+                    self.test1 = decodedData
+                }
                 
                 
             } catch {
@@ -88,8 +98,7 @@ class GameViewModel: ObservableObject{
         task.resume()
         semaphore.wait()
     }
-    
-    
+       
     func getDate(){
         let currentDate = Date()
         let oneDay = DateComponents(day: 1)
