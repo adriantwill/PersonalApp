@@ -15,7 +15,6 @@ struct GamesView: View {
     var body: some View {
         NavigationStack {
             List {
-                //ForEach(items) { team in }
                 ForEach(gamesVM.test1.response, id: \.self) { team in
                     NavigationLink(destination: DetailView(nflstand: team)) {
                         Image("\(team.team.name)") // Replace with your image name
@@ -25,9 +24,11 @@ struct GamesView: View {
                         Text(team.team.name)
                         Text("\(team.won) - \(team.lost)")
                     }
+                    .navigationBarBackButtonHidden()
                 }
                 .navigationTitle("Current Standings")
             }.navigationBarTitleDisplayMode(.inline)
+            
            
             .refreshable {
                 gamesVM.getJsonData(api: "https://v1.american-football.api-sports.io//standings?league=1&season=2023", whichapi: 1)
@@ -38,8 +39,9 @@ struct GamesView: View {
                     item.ties = gamesVM.test1.response[i].ties
                     try? context.save()
                 }
+            }
         }
-        }
+        .tint(Color.white)
     }
 }
 
@@ -47,8 +49,34 @@ struct GamesView: View {
 struct DetailView: View {
     @State var nflstand: nflresponse
     var body: some View {
-        Text(nflstand.team.name)
+        ZStack{
+            Color("Background").ignoresSafeArea()
+            VStack{
+                ZStack(alignment: .top) {
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.black, lineWidth: 4)
+                        .fill(Color(nflstand.team.name)) // Fill the rectangle with the team color
+                        .frame(height: 340) // Specify the frame dimensions
+                        .ignoresSafeArea()
+                    VStack(spacing: 0){
+                        Image(nflstand.team.name)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 200, height: 200)
+                            .shadow(radius: 10)
+                        Text(nflstand.team.name)
+                            .font(.title)
+                            .bold()
+                            .foregroundColor(.white)
+                            .shadow(radius: 10)
+                            .offset(y: -10)
+                    }
+                }
+                Spacer()
+            }
+        }
     }
+    
 }
 #Preview {
     GamesView()

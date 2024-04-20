@@ -73,6 +73,10 @@ struct nflstandings: Decodable, Hashable {
     var response: [nflresponse]
 }
 
+struct extra: Decodable, Hashable{
+    var color: String
+}
+
 struct nflresponse: Decodable, Hashable{
     var division: String
     var position: Int

@@ -32,8 +32,9 @@ class GameViewModel: ObservableObject{
         let dat = date(start: "")
         let res = response(id: 0, league: "", season: 0, date: dat, stage: 0, status: stat, periods: period, teams: team, scores: scores)
         test = games(get: "", errors: [""], results: 0, response: [res])
-        let nflteam = nflteam(id: 0, name: "")
+        let nflteam = nflteam(id: 0, name: "Tennessee Titans")
         let responsenfl = nflresponse(division: "", position: 0, team: nflteam, won: 0, lost: 0, ties: 0)
+        let extra = extra(color: "")
         test1 = nflstandings(results: 0, response: [responsenfl])
     }
     func addummy() {
