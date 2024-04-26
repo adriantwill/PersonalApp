@@ -17,7 +17,6 @@ struct DraftView: View {
                     gameVM.addummy()
                 }
             Spacer()
-                .frame(height: -10)
                     ZStack{
                         Rectangle ()
                             .fill(Color.white)
@@ -66,8 +65,6 @@ struct DraftView: View {
                 .multilineTextAlignment(.leading)
                 .bold()
             Spacer()
-                .frame(height: -10)
-            
                                 ZStack{
                                     Rectangle ()
                                         .fill(Color.white)

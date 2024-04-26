@@ -54,27 +54,26 @@ struct favgame {
 }
 
 @Model
-class swiftstandings {
-    var name: String
-    var win: Int
-    var loss: Int
+class swiftnflresponse {
+    var division: String
+    var position: Int
+    @Attribute(.unique) var team: String
+    var won: Int
+    var lost: Int
     var ties: Int
-    init(name: String, win: Int, loss: Int, ties: Int) {
-        self.name = name
-        self.win = win
-        self.loss = loss
-        self.ties = ties
+    init(from nflresponse: nflresponse) {
+        self.division = nflresponse.division
+        self.position = nflresponse.position
+        self.team = nflresponse.team.name
+        self.won = nflresponse.won
+        self.lost = nflresponse.lost
+        self.ties = nflresponse.ties
     }
 }
-
 
 struct nflstandings: Decodable, Hashable {
     var results: Int
     var response: [nflresponse]
-}
-
-struct extra: Decodable, Hashable{
-    var color: String
 }
 
 struct nflresponse: Decodable, Hashable{
@@ -90,7 +89,6 @@ struct nflteam: Decodable, Hashable{
     var id: Int
     var name: String
 }
-
 
 struct games: Decodable, Hashable {
     var get: String

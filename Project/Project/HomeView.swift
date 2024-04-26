@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @ObservedObject var gameVM = GameViewModel()
+    @Environment(\.modelContext) var modelContext
     var body: some View {
         ScrollView {
             VStack {
@@ -73,7 +74,6 @@ struct HomeView: View {
                     .multilineTextAlignment(.leading)
                     .bold()
                 Spacer()
-                    .frame(height: -10)
                 ZStack{
                     Rectangle ()
                         .fill(Color.white)
@@ -122,7 +122,6 @@ struct HomeView: View {
                 Text("Draft:")
                     .bold()
                 Spacer()
-                    .frame(height: -10)
                 VStack{
                         ZStack{
                             Rectangle ()
@@ -171,7 +170,8 @@ struct HomeView: View {
             }
         }
         .refreshable {
-            gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?date=2024-04-13", whichapi: 0)
+            
+            gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?date=2024-04-14", whichapi: 0)
         }
     }
 }

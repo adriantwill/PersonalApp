@@ -14,6 +14,6 @@ struct ProjectApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: [swiftstandings.self])
+        .modelContainer(for: [swiftnflresponse.self])
     }
 }
