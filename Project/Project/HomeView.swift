@@ -171,7 +171,7 @@ struct HomeView: View {
         }
         .refreshable {
             
-            gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?date=2024-04-14", whichapi: 0)
+            gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?date=2024-04-30", whichapi: 0)
         }
     }
 }
