@@ -18,6 +18,7 @@ class GameViewModel: ObservableObject{
     @Published var favgames = favgame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philidephia 76ers", hscore: "103", ascore: "104", time: "April 14 7:00PM", hrecord: "38-8", arecord: "39-7")
     @Published var test: games
     @Published var test1: nflstandings
+    @Published var test2: [nfldraft]
     @Published var currdate = String()
     @Published var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @Published var stadiums = maplocations()
@@ -35,6 +36,7 @@ class GameViewModel: ObservableObject{
         let nflteam = nflteam(id: 0, name: "Tennessee Titans")
         let responsenfl = nflresponse(division: "AFC South", position: 4, team: nflteam, won: 0, lost: 0, ties: 0)
         test1 = nflstandings(results: 0, response: [responsenfl])
+        test2 = [nfldraft(collegeTeam: "USC", nflTeam: "Carolina", overall: 0, name: "Caleb Williams", position: "QB")]
     }
     func addummy() {
         draftteams.append(draftteam(name: "Carolina Panthers", abrevname: "CAR", winloss: "2-15", sos: "0.0522"))
@@ -58,11 +60,16 @@ class GameViewModel: ObservableObject{
         let semaphore = DispatchSemaphore (value: 0)
 
         var request = URLRequest(url: URL(string: api)!,timeoutInterval: Double.infinity)
-        request.addValue("a439e25a4b4de1897e5deab481669b4c", forHTTPHeaderField: "x-rapidapi-key")
+        
         if whichapi == 0{
+            request.addValue("a439e25a4b4de1897e5deab481669b4c", forHTTPHeaderField: "x-rapidapi-key")
             request.addValue("v2.nba.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
         } else if whichapi == 1 {
+            request.addValue("a439e25a4b4de1897e5deab481669b4c", forHTTPHeaderField: "x-rapidapi-key")
             request.addValue("v1.american-football.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
+        } else if whichapi == 2{
+            request.addValue("application/json", forHTTPHeaderField: "accept")
+            request.addValue("Bearer NsQ7Cp6TZlhQSKl/U8rC+8ajbyE9KWLBM36e8QRmhzI8wXiRM7E9ZZ8hyd8h2awO", forHTTPHeaderField: "Authorization")
         }
         
 
@@ -85,9 +92,10 @@ class GameViewModel: ObservableObject{
                 } else if whichapi == 1{
                     let decodedData = try JSONDecoder().decode(nflstandings.self, from: data)
                     self.test1 = decodedData
+                } else if whichapi == 2{
+                    let decodedData = try JSONDecoder().decode([nfldraft].self, from: data)
+                    self.test2 = decodedData
                 }
-                
-                
             } catch {
                 print("error: \(error)")
             }

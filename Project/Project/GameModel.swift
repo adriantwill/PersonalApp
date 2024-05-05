@@ -71,6 +71,14 @@ class swiftnflresponse {
     }
 }
 
+struct nfldraft: Decodable, Hashable {
+    var collegeTeam: String
+    var nflTeam: String
+    var overall: Int
+    var name: String
+    var position: String
+}
+
 struct nflstandings: Decodable, Hashable {
     var results: Int
     var response: [nflresponse]
