@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HomeView: View {
     @ObservedObject var gameVM = GameViewModel()
-    @Environment(\.modelContext) var modelContext
+    @Environment(\.modelContext) var context
+    @Query() var swifttest: [swiftscores]
     var body: some View {
         ScrollView {
             VStack {
@@ -36,9 +38,9 @@ struct HomeView: View {
                                     .shadow(color: Color.black.opacity(0.3), radius: 3, x: 2, y: 4)
                                     .padding(10)
                                 VStack(alignment: .leading, spacing: 0) {
-                                    Text("LIVE")
+                                    Text("\(gameVM.convertUTCtoPacificTime(utcDate: index.date.start))")
                                         .font(.body)
-                                        .foregroundColor(.red)
+                                        
                                         .padding(.top, -20)
                                         .padding()
                                     HStack {
@@ -48,7 +50,7 @@ struct HomeView: View {
                                             .frame(width: 32, height: 32)
                                         Text("\(index.teams.visitors.code)")
                                             .padding(.trailing, 20)
-                                        Text("\(index.scores.visitors.points)")
+                                        Text("\(index.scores.visitors.points ?? 0)")
                                     }
 
                                     HStack {
@@ -59,7 +61,7 @@ struct HomeView: View {
                                         Text("\(index.teams.home.code)")
                                             .padding(.trailing, 20)
                                             .fixedSize()
-                                        Text("\(index.scores.home.points)")
+                                        Text("\(index.scores.home.points ?? 0)")
                                             .fixedSize()
                                     }
                                 }
@@ -170,11 +172,13 @@ struct HomeView: View {
             }
         }
         .refreshable {
-            gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?date=2024-04-30", whichapi: 0)
+            gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?date=\(gameVM.getDate())", whichapi: 0)
+            
         }
     }
 }
 
 #Preview {
     HomeView()
+        .modelContainer(for: [swiftscores.self])
 }

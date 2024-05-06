@@ -26,11 +26,6 @@ struct GamesView: View {
                     }
                     .navigationBarBackButtonHidden()
                 }
-                .onDelete { indexSet in
-                    for index in indexSet{
-                        context.delete(swifttest[index])
-                    }
-                }
                 .navigationTitle("Current Standings")
             }.navigationBarTitleDisplayMode(.inline)
             

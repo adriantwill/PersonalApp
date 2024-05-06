@@ -15,5 +15,6 @@ struct ProjectApp: App {
             ContentView()
         }
         .modelContainer(for: [swiftnflresponse.self])
+        .modelContainer(for: [swiftscores.self])
     }
 }

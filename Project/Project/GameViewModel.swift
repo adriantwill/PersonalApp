@@ -15,24 +15,24 @@ class GameViewModel: ObservableObject{
     @Published var bigboards = [bigboard]()
     @Published var searchCity = "Seattle"
     @Published var searchText = ""
-    @Published var favgames = favgame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philidephia 76ers", hscore: "103", ascore: "104", time: "April 14 7:00PM", hrecord: "38-8", arecord: "39-7")
+    @Published var favgames = favgame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philadelphia 76ers", hscore: "103", ascore: "104", time: "April 14 7:00PM", hrecord: "38-8", arecord: "39-7")
     @Published var test: games
     @Published var test1: nflstandings
     @Published var test2: [nfldraft]
-    @Published var currdate = String()
     @Published var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @Published var stadiums = maplocations()
     init()
     {
-        let teamscore = teamscores(win: 0, loss: 0, linescore: [""], points: 0)
+        let teamscore = teamscores(win: 100, loss: 90, linescore: [""], points: 0)
         let scores = scores(visitors: teamscore, home: teamscore)
-        let teamid = teamid(id: 0, name: "", nickname: "", code: "", logo: "")
-        let team = teams(visitors: teamid, home: teamid)
+        let vteamid = teamid(id: 0, name: "LA Clippers", nickname: "Clippers", code: "LAC", logo: "")
+        let hteamid = teamid(id: 0, name: "Dallas Mavericks", nickname: "Mavericks", code: "MAV", logo: "")
+        let team = teams(visitors: vteamid, home: hteamid)
         let period = periods(current: 0, total: 0, endOfPeriod: true)
         let stat = status(halftime: true, short: 0, long: "")
-        let dat = date(start: "")
+        let dat = date(start: "2024-05-04T01:30:00.000Z")
         let res = response(id: 0, league: "", season: 0, date: dat, stage: 0, status: stat, periods: period, teams: team, scores: scores)
-        test = games(get: "", errors: [""], results: 0, response: [res])
+        test = games(results: 0, response: [res])
         let nflteam = nflteam(id: 0, name: "Tennessee Titans")
         let responsenfl = nflresponse(division: "AFC South", position: 4, team: nflteam, won: 0, lost: 0, ties: 0)
         test1 = nflstandings(results: 0, response: [responsenfl])
@@ -68,8 +68,8 @@ class GameViewModel: ObservableObject{
             request.addValue(Secrets.apisportsio, forHTTPHeaderField: "x-rapidapi-key")
             request.addValue("v1.american-football.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
         } else if whichapi == 2{
-            request.addValue(Secrets.collegeapi, forHTTPHeaderField: "accept")
-            request.addValue("Bearer NsQ7Cp6TZlhQSKl/U8rC+8ajbyE9KWLBM36e8QRmhzI8wXiRM7E9ZZ8hyd8h2awO", forHTTPHeaderField: "Authorization")
+            request.addValue("application/json", forHTTPHeaderField: "accept")
+            request.addValue("Bearer \(Secrets.collegeapi)", forHTTPHeaderField: "Authorization")
         }
         
 
@@ -107,11 +107,31 @@ class GameViewModel: ObservableObject{
         semaphore.wait()
     }
        
-    func getDate(){
+    func getDate() -> String{
         let currentDate = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        currdate = dateFormatter.string(from: currentDate)
+        return dateFormatter.string(from: currentDate)
+    }
+    
+    func convertUTCtoPacificTime(utcDate: String) -> String {
+        // Create a DateFormatter to parse the UTC date string
+        let utcFormatter = DateFormatter()
+        utcFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        utcFormatter.timeZone = TimeZone(secondsFromGMT: 0) // UTC time zone
+        
+        // Convert the string to a Date object
+        guard let date = utcFormatter.date(from: utcDate) else {
+            return "Invalid date"
+        }
+        
+        // Create a DateFormatter to output the date in Pacific Time
+        let pacificFormatter = DateFormatter()
+        pacificFormatter.dateFormat = "HH:mm"
+        pacificFormatter.timeZone = TimeZone(identifier: "America/Los_Angeles") // Pacific Time zone
+        
+        // Format the date into Pacific Time string
+        return pacificFormatter.string(from: date)
     }
     
 }

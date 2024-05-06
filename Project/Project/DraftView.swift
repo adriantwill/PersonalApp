@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DraftView: View {
     @ObservedObject var gameVM = GameViewModel()
+    @State private var selectedItemId: Int?
     var body: some View {
         List{
             ScrollView{
@@ -30,9 +31,6 @@ struct DraftView: View {
                             .clipShape(Circle())
                             .overlay(Circle().stroke(Color.black, lineWidth: 1))
                     }
-
-                  
-                
                 }
             }
         }

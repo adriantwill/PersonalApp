@@ -98,15 +98,29 @@ struct nflteam: Decodable, Hashable{
     var name: String
 }
 
-struct games: Decodable, Hashable {
-    var get: String
-    var errors: [String]
-    var results: Int
-    var response: [response]
+@Model
+class swiftscores {
+    @Attribute(.unique) var id: Int
+    var hteam: String
+    var ateam: String
+    var hteamcode: String
+    var ateamcode: String
+    var hscore: Int
+    var ascore: Int
+    init(from response: response) {
+        self.id = response.id
+        self.hteam = response.teams.home.name
+        self.ateam = response.teams.visitors.name
+        self.hteamcode = response.teams.home.code
+        self.ateamcode = response.teams.visitors.code
+        self.hscore = response.scores.home.points ?? 0
+        self.ascore = response.scores.visitors.points ?? 0
+    }
 }
 
-struct parameters: Decodable, Hashable{
-    var date: String
+struct games: Decodable, Hashable {
+    var results: Int
+    var response: [response]
 }
 
 struct response: Decodable, Hashable{
@@ -162,5 +176,5 @@ struct teamscores: Decodable, Hashable{
     var win: Int
     var loss: Int
     var linescore: [String]
-    var points: Int
+    var points: Int?
 }
