@@ -21,7 +21,7 @@ struct DraftView: View {
                         VStack(alignment: .leading) {
                             Text(index.name)
                             Text("\(index.position), \(index.collegeTeam)")
-                                .font(.system(size: 15))
+                                .font(.system(size: 12))
                         }
                         Spacer()
                         Image("\(index.name)")

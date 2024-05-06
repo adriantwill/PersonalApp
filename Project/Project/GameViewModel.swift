@@ -62,13 +62,13 @@ class GameViewModel: ObservableObject{
         var request = URLRequest(url: URL(string: api)!,timeoutInterval: Double.infinity)
         
         if whichapi == 0{
-            request.addValue("a439e25a4b4de1897e5deab481669b4c", forHTTPHeaderField: "x-rapidapi-key")
+            request.addValue(Secrets.apisportsio, forHTTPHeaderField: "x-rapidapi-key")
             request.addValue("v2.nba.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
         } else if whichapi == 1 {
-            request.addValue("a439e25a4b4de1897e5deab481669b4c", forHTTPHeaderField: "x-rapidapi-key")
+            request.addValue(Secrets.apisportsio, forHTTPHeaderField: "x-rapidapi-key")
             request.addValue("v1.american-football.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
         } else if whichapi == 2{
-            request.addValue("application/json", forHTTPHeaderField: "accept")
+            request.addValue(Secrets.collegeapi, forHTTPHeaderField: "accept")
             request.addValue("Bearer NsQ7Cp6TZlhQSKl/U8rC+8ajbyE9KWLBM36e8QRmhzI8wXiRM7E9ZZ8hyd8h2awO", forHTTPHeaderField: "Authorization")
         }
         
