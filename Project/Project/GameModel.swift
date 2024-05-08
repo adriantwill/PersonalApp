@@ -100,21 +100,23 @@ struct nflteam: Decodable, Hashable{
 
 @Model
 class swiftscores {
-    @Attribute(.unique) var id: Int
     var hteam: String
     var ateam: String
     var hteamcode: String
     var ateamcode: String
     var hscore: Int
     var ascore: Int
+    @Attribute(.unique) var start: String
+    var long: String
     init(from response: response) {
-        self.id = response.id
         self.hteam = response.teams.home.name
         self.ateam = response.teams.visitors.name
         self.hteamcode = response.teams.home.code
         self.ateamcode = response.teams.visitors.code
         self.hscore = response.scores.home.points ?? 0
         self.ascore = response.scores.visitors.points ?? 0
+        self.start = response.date.start
+        self.long = response.status.long
     }
 }
 

@@ -11,7 +11,7 @@ import SwiftData
 struct HomeView: View {
     @ObservedObject var gameVM = GameViewModel()
     @Environment(\.modelContext) var context
-    @Query() var swifttest: [swiftscores]
+    @Query(sort: \swiftscores.hscore) var swifttest: [swiftscores]
     var body: some View {
         ScrollView {
             VStack {
@@ -25,7 +25,7 @@ struct HomeView: View {
                     }
                 ScrollView(.horizontal, content: {
                     HStack {
-                        ForEach(gameVM.test.response, id: \.self) { index in
+                        ForEach(swifttest, id: \.self) { index in
                             ZStack{
                                 Rectangle ()
                                     .fill(Color.white)
@@ -38,30 +38,30 @@ struct HomeView: View {
                                     .shadow(color: Color.black.opacity(0.3), radius: 3, x: 2, y: 4)
                                     .padding(10)
                                 VStack(alignment: .leading, spacing: 0) {
-                                    Text("\(gameVM.convertUTCtoPacificTime(utcDate: index.date.start))")
+                                    Text("\(gameVM.convertUTCtoPacificTime(utcDate: index.start, long: index.long))")
                                         .font(.body)
                                         
                                         .padding(.top, -20)
                                         .padding()
                                     HStack {
-                                        Image("\(index.teams.visitors.name)") // Replace with your image name
+                                        Image("\(index.ateam)") // Replace with your image name
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
                                             .frame(width: 32, height: 32)
-                                        Text("\(index.teams.visitors.code)")
+                                        Text("\(index.ateamcode)")
                                             .padding(.trailing, 20)
-                                        Text("\(index.scores.visitors.points ?? 0)")
+                                        Text("\(index.ascore)")
                                     }
 
                                     HStack {
-                                        Image("\(index.teams.home.name)") // Replace with your image name
+                                        Image("\(index.hteam)") // Replace with your image name
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
                                             .frame(width: 32, height: 32)
-                                        Text("\(index.teams.home.code)")
+                                        Text("\(index.hteamcode)")
                                             .padding(.trailing, 20)
                                             .fixedSize()
-                                        Text("\(index.scores.home.points ?? 0)")
+                                        Text("\(index.hscore)")
                                             .fixedSize()
                                     }
                                 }
@@ -173,7 +173,8 @@ struct HomeView: View {
         }
         .refreshable {
             gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?date=\(gameVM.getDate())", whichapi: 0)
-            
+            let swifttest = gameVM.test.response.map{ swiftscores(from: $0)}
+            swifttest.forEach{context.insert($0)}
         }
     }
 }

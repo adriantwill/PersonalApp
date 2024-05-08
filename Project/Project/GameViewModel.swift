@@ -114,24 +114,31 @@ class GameViewModel: ObservableObject{
         return dateFormatter.string(from: currentDate)
     }
     
-    func convertUTCtoPacificTime(utcDate: String) -> String {
+    func convertUTCtoPacificTime(utcDate: String, long: String) -> String {
         // Create a DateFormatter to parse the UTC date string
-        let utcFormatter = DateFormatter()
-        utcFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-        utcFormatter.timeZone = TimeZone(secondsFromGMT: 0) // UTC time zone
-        
-        // Convert the string to a Date object
-        guard let date = utcFormatter.date(from: utcDate) else {
-            return "Invalid date"
+        if (long == "Scheduled") {
+            let utcFormatter = DateFormatter()
+            utcFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+            utcFormatter.timeZone = TimeZone(secondsFromGMT: 0) // UTC time zone
+            
+            // Convert the string to a Date object
+            guard let date = utcFormatter.date(from: utcDate) else {
+                return "Invalid date"
+            }
+            
+            // Create a DateFormatter to output the date in Pacific Time
+            let pacificFormatter = DateFormatter()
+            pacificFormatter.dateFormat = "HH:mm"
+            pacificFormatter.timeZone = TimeZone(identifier: "America/Los_Angeles") // Pacific Time zone
+            
+            // Format the date into Pacific Time string
+            return pacificFormatter.string(from: date)
+        } else if (long == "Finished") {
+            return "Finished"
+        } else {
+            return "Live"
         }
         
-        // Create a DateFormatter to output the date in Pacific Time
-        let pacificFormatter = DateFormatter()
-        pacificFormatter.dateFormat = "HH:mm"
-        pacificFormatter.timeZone = TimeZone(identifier: "America/Los_Angeles") // Pacific Time zone
-        
-        // Format the date into Pacific Time string
-        return pacificFormatter.string(from: date)
     }
     
 }
