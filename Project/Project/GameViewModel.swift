@@ -15,45 +15,48 @@ class GameViewModel: ObservableObject{
     @Published var bigboards = [bigboard]()
     @Published var searchCity = "Seattle"
     @Published var searchText = ""
-    @Published var favteam = ""
+    @Published var favnflteam = ""
+    @Published var favnbateam = ""
     @Published var favgames = favgame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philadelphia 76ers", hscore: "103", ascore: "104", time: "April 14 7:00PM", hrecord: "38-8", arecord: "39-7")
     @Published var test: games
     @Published var test1: nflstandings
     @Published var test2: [nfldraft]
     @Published var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @Published var stadiums = maplocations()
-    @Published var nbateams = [
-        "Atlanta Hawks",
-        "Boston Celtics",
-        "Brooklyn Nets",
-        "Charlotte Hornets",
-        "Chicago Bulls",
-        "Cleveland Cavaliers",
-        "Dallas Mavericks",
-        "Denver Nuggets",
-        "Detroit Pistons",
-        "Golden State Warriors",
-        "Houston Rockets",
-        "Indiana Pacers",
-        "LA Clippers",
-        "LA Lakers",
-        "Memphis Grizzlies",
-        "Miami Heat",
-        "Milwaukee Bucks",
-        "Minnesota Timberwolves",
-        "New Orleans Pelicans",
-        "New York Knicks",
-        "Oklahoma City Thunder",
-        "Orlando Magic",
-        "Philadelphia Sixers",
-        "Phoenix Suns",
-        "Portland Trail Blazers",
-        "Sacramento Kings",
-        "San Antonio Spurs",
-        "Toronto Raptors",
-        "Utah Jazz",
-        "Washington Wizards"
-    ]
+
+    @Published var nbateam = TeamContainer(teams: [
+            Team(name: "Atlanta Hawks", code: "ATL", nickname: "Hawks", id: 1),
+            Team(name: "Boston Celtics", code: "BOS", nickname: "Celtics", id: 2),
+            Team(name: "Brooklyn Nets", code: "BKN", nickname: "Nets", id: 4),
+            Team(name: "Charlotte Hornets", code: "CHA", nickname: "Hornets", id: 5),
+            Team(name: "Chicago Bulls", code: "CHI", nickname: "Bulls", id: 6),
+            Team(name: "Cleveland Cavaliers", code: "CLE", nickname: "Cavaliers", id: 7),
+            Team(name: "Dallas Mavericks", code: "DAL", nickname: "Mavericks", id: 8),
+            Team(name: "Denver Nuggets", code: "DEN", nickname: "Nuggets", id: 9),
+            Team(name: "Detroit Pistons", code: "DET", nickname: "Pistons", id: 10),
+            Team(name: "Golden State Warriors", code: "GSW", nickname: "Warriors", id: 11),
+            Team(name: "Houston Rockets", code: "HOU", nickname: "Rockets", id: 14),
+            Team(name: "Indiana Pacers", code: "IND", nickname: "Pacers", id: 15),
+            Team(name: "Los Angeles Clippers", code: "LAC", nickname: "Clippers", id: 16),
+            Team(name: "Los Angeles Lakers", code: "LAL", nickname: "Lakers", id: 17),
+            Team(name: "Memphis Grizzlies", code: "MEM", nickname: "Grizzlies", id: 19),
+            Team(name: "Miami Heat", code: "MIA", nickname: "Heat", id: 20),
+            Team(name: "Milwaukee Bucks", code: "MIL", nickname: "Bucks", id: 21),
+            Team(name: "Minnesota Timberwolves", code: "MIN", nickname: "Timberwolves", id: 22),
+            Team(name: "New Orleans Pelicans", code: "NOP", nickname: "Pelicans", id: 23),
+            Team(name: "New York Knicks", code: "NYK", nickname: "Knicks", id: 24),
+            Team(name: "Oklahoma City Thunder", code: "OKC", nickname: "Thunder", id: 25),
+            Team(name: "Orlando Magic", code: "ORL", nickname: "Magic", id: 26),
+            Team(name: "Philadelphia 76ers", code: "PHI", nickname: "76ers", id: 27),
+            Team(name: "Phoenix Suns", code: "PHX", nickname: "Suns", id: 28),
+            Team(name: "Portland Trail Blazers", code: "POR", nickname: "Trail Blazers", id: 29),
+            Team(name: "Sacramento Kings", code: "SAC", nickname: "Kings", id: 30),
+            Team(name: "San Antonio Spurs", code: "SAS", nickname: "Spurs", id: 31),
+            Team(name: "Toronto Raptors", code: "TOR", nickname: "Raptors", id: 38),
+            Team(name: "Utah Jazz", code: "UTA", nickname: "Jazz", id: 40),
+            Team(name: "Washington Wizards", code: "WAS", nickname: "Wizards", id: 41)
+    ])
+
     @Published var nflteams = [
         "Arizona Cardinals",
         "Atlanta Falcons",
@@ -105,24 +108,10 @@ class GameViewModel: ObservableObject{
         test1 = nflstandings(results: 0, response: [responsenfl])
         test2 = [nfldraft(collegeTeam: "USC", nflTeam: "Carolina", overall: 0, name: "Caleb Williams", position: "QB")]
     }
-    func addummy() {
-        draftteams.append(draftteam(name: "Carolina Panthers", abrevname: "CAR", winloss: "2-15", sos: "0.0522"))
-        draftteams.append(draftteam(name: "Washington Commanders", abrevname: "WAS", winloss: "3-14", sos: "0.0522"))
-        draftteams.append(draftteam(name: "New England Patriots", abrevname: "NWE", winloss: "3-14", sos: "0.0522"))
-        draftteams.append(draftteam(name: "Arizona Cardinals", abrevname: "ARZ", winloss: "4-13", sos: "0.0522"))
-        draftteams.append(draftteam(name: "Los Angeles Chargers", abrevname: "LACH", winloss: "5-12", sos: "0.0522"))
-        draftteams.append(draftteam(name: "New York Giants", abrevname: "NYG", winloss: "6-11", sos: "0.0522"))
-        draftteams.append(draftteam(name: "Tennessee Titans", abrevname: "TEN", winloss: "7-10", sos: "0.0522"))
-        bigboards.append(bigboard(name: "Caleb Williams", position: "QB", school: "USC"))
-        bigboards.append(bigboard(name: "Drake Maye", position: "QB", school: "UNC"))
-        bigboards.append(bigboard(name: "Jayden Daniels", position: "QB", school: "LSU"))
-        bigboards.append(bigboard(name: "Marvin Harrison Jr.", position: "WR", school: "OSU"))
-        bigboards.append(bigboard(name: "Malik Nabers", position: "WR", school: "LSU"))
-        bigboards.append(bigboard(name: "Rome Odunze", position: "WR", school: "Washington"))
-        bigboards.append(bigboard(name: "Joe Alt", position: "OT", school: "Notre Dame"))
-        bigboards.append(bigboard(name: "Dallas Turner", position: "LB", school: "Alabama"))
-    }
+
     func getJsonData(api: String, whichapi: Int) {
+        
+        
         
         let semaphore = DispatchSemaphore (value: 0)
 
@@ -155,10 +144,14 @@ class GameViewModel: ObservableObject{
             do {
                 if whichapi == 0{
                     let decodedData = try JSONDecoder().decode(games.self, from: data)
-                    self.test = decodedData
+                    DispatchQueue.main.async {
+                        self.test = decodedData
+                    }
                 } else if whichapi == 1{
                     let decodedData = try JSONDecoder().decode(nflstandings.self, from: data)
-                    self.test1 = decodedData
+                    DispatchQueue.main.async {
+                        self.test1 = decodedData
+                    }
                 } else if whichapi == 2{
                     let decodedData = try JSONDecoder().decode([nfldraft].self, from: data)
                     self.test2 = decodedData
@@ -207,7 +200,10 @@ class GameViewModel: ObservableObject{
         }
         
     }
-    
+}
+
+func findFirstScheduledGame(games: [response]) -> response? {
+    return games.first { $0.status.long == "Scheduled" }
 }
 
 

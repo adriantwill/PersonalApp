@@ -13,7 +13,7 @@ struct HomeView: View {
     @Environment(\.modelContext) var context
     @Query(sort: \swiftscores.hscore) var swifttest: [swiftscores]
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack {
                     Spacer()
@@ -21,12 +21,10 @@ struct HomeView: View {
                     Text("Upcoming Games:")
                         .multilineTextAlignment(.leading)
                         .bold()
-                        .onAppear {
-                            gameVM.addummy()
-                        }
+                       
                     ScrollView(.horizontal, content: {
                         HStack {
-                            ForEach(swifttest, id: \.self) { index in
+                            ForEach(gameVM.test.response, id: \.self) { index in
                                 ZStack{
                                     Rectangle ()
                                         .fill(Color.white)
@@ -39,30 +37,30 @@ struct HomeView: View {
                                         .shadow(color: Color.black.opacity(0.3), radius: 3, x: 2, y: 4)
                                         .padding(10)
                                     VStack(alignment: .leading, spacing: 0) {
-                                        Text("\(gameVM.convertUTCtoPacificTime(utcDate: index.start, long: index.long))")
+                                        Text("d")
                                             .font(.body)
                                             
                                             .padding(.top, -20)
                                             .padding()
                                         HStack {
-                                            Image("\(index.ateam)") // Replace with your image name
+                                            Image("d") // Replace with your image name
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
                                                 .frame(width: 32, height: 32)
-                                            Text("\(index.ateamcode)")
+                                            Text("d")
                                                 .padding(.trailing, 20)
-                                            Text("\(index.ascore)")
+                                            Text("d")
                                         }
 
                                         HStack {
-                                            Image("\(index.hteam)") // Replace with your image name
+                                            Image("d") // Replace with your image name
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
                                                 .frame(width: 32, height: 32)
-                                            Text("\(index.hteamcode)")
+                                            Text("d")
                                                 .padding(.trailing, 20)
                                                 .fixedSize()
-                                            Text("\(index.hscore)")
+                                            Text("\(index.scores.visitors.score)")
                                                 .fixedSize()
                                         }
                                     }
@@ -70,6 +68,7 @@ struct HomeView: View {
                                 }
                             }
                         }
+                        
                     })
                     Spacer()
                         .frame(height: 40)
@@ -176,17 +175,30 @@ struct HomeView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Menu {
-                        ForEach(gameVM.nbateams, id: \.self) { option in
+                        ForEach(gameVM.nbateam.teams, id: \.self) { option in
                             Button(action: {
-                                self.gameVM.favteam = option
-                            })
+                                self.gameVM.favnflteam = option.name
+                            }) {
+                                Text(option.name)
+                            }
                         }
                     } label: {
-                        Image(systemName: "slider.horizontal.3")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24)
-                            .foregroundColor(.blue)  // Icon color customization
+                        Image(systemName: "basketball")
+                    }
+                }
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Menu {
+                        ForEach(gameVM.nflteams, id: \.self) { option in
+                            Button(action: {
+                                self.gameVM.favnbateam = option
+                            }) {
+                                Text(option)
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "football")
                     }
                 }
             }
@@ -194,12 +206,13 @@ struct HomeView: View {
                 gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?date=\(gameVM.getDate())", whichapi: 0)
                 let swifttest = gameVM.test.response.map{ swiftscores(from: $0)}
                 swifttest.forEach{context.insert($0)}
-        }
+               // gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?season=2023&team=\(gameVM.nbateam.find(identifier: gameVM.favnbateam, entered: "Name", returned: "Id") ) ", whichapi: 0)
+          }
         }
     }
 }
 
 #Preview {
     HomeView()
-        .modelContainer(for: [swiftscores.self])
+        .modelContainer(for: [swiftscores.self, swiftnflresponse.self, swiftnfldraft.self])
 }

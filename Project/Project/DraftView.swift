@@ -6,14 +6,17 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct DraftView: View {
     @ObservedObject var gameVM = GameViewModel()
+    @Environment(\.modelContext) var context
+    @Query(sort: \swiftnfldraft.overall) var swiftdraftnfl: [swiftnfldraft]
     @State private var selectedItemId: Int?
     var body: some View {
         List{
             ScrollView{
-                ForEach(gameVM.test2.prefix(32), id: \.self) { index in
+                ForEach(swiftdraftnfl.prefix(32), id: \.self) { index in
                     HStack {
                         Text("\(index.overall). ")
                         Image("\(index.nflTeam)NFL")
@@ -36,10 +39,13 @@ struct DraftView: View {
         }
         .refreshable {
             gameVM.getJsonData(api: "https://api.collegefootballdata.com/draft/picks?year=2024", whichapi: 2)
+            let swiftdraftnfl = gameVM.test2.map{ swiftnfldraft(from: $0)}
+            swiftdraftnfl.forEach{context.insert($0)}
         }
     }
 }
 
 #Preview {
     DraftView()
+        .modelContainer(for: [swiftscores.self, swiftnflresponse.self, swiftnfldraft.self])
 }

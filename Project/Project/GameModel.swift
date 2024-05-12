@@ -11,6 +11,31 @@ import SwiftData
 import SwiftUI
 import MapKit
 
+struct Team: Hashable {
+    var name: String
+    var code: String
+    var nickname: String
+    var id: Int
+}
+
+struct TeamContainer: Hashable {
+    var teams: [Team]
+
+    func find(identifier: String, entered: String, returned: String) -> String {
+        for team in teams {
+            if entered == "Name" {
+                if team.name == identifier {
+                    if returned == "Id"{
+                        return String(team.id)
+                    }
+                }
+            }
+            
+        }
+        return ""
+    }
+}
+
 struct maplocations {
     var warriors: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.768009, longitude: -122.387787)
     var fortyniners: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.4033, longitude: -121.9694)
@@ -54,6 +79,31 @@ struct favgame {
 }
 
 @Model
+class swiftnfldraft {
+    var collegeTeam: String
+    var nflTeam: String
+    @Attribute(.unique) var overall: Int
+    var name: String
+    var position: String
+    init(from nfldraft: nfldraft) {
+        self.collegeTeam = nfldraft.collegeTeam
+        self.nflTeam = nfldraft.nflTeam
+        self.overall = nfldraft.overall
+        self.name = nfldraft.name
+        self.position = nfldraft.position
+    }
+}
+
+
+struct nfldraft: Decodable, Hashable {
+    var collegeTeam: String
+    var nflTeam: String
+    var overall: Int
+    var name: String
+    var position: String
+}
+
+@Model
 class swiftnflresponse {
     var division: String
     var position: Int
@@ -69,14 +119,6 @@ class swiftnflresponse {
         self.lost = nflresponse.lost
         self.ties = nflresponse.ties
     }
-}
-
-struct nfldraft: Decodable, Hashable {
-    var collegeTeam: String
-    var nflTeam: String
-    var overall: Int
-    var name: String
-    var position: String
 }
 
 struct nflstandings: Decodable, Hashable {
@@ -100,15 +142,17 @@ struct nflteam: Decodable, Hashable{
 
 @Model
 class swiftscores {
+    @Attribute(.unique) var iden: Int
     var hteam: String
     var ateam: String
     var hteamcode: String
     var ateamcode: String
     var hscore: Int
     var ascore: Int
-    @Attribute(.unique) var start: String
+    var start: String
     var long: String
     init(from response: response) {
+        self.iden = response.id
         self.hteam = response.teams.home.name
         self.ateam = response.teams.visitors.name
         self.hteamcode = response.teams.home.code
@@ -120,6 +164,7 @@ class swiftscores {
     }
 }
 
+//nba games
 struct games: Decodable, Hashable {
     var results: Int
     var response: [response]
