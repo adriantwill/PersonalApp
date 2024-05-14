@@ -13,7 +13,7 @@ struct ProjectApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: [swiftscores.self, swiftnflresponse.self, swiftnfldraft.self])
+                .modelContainer(for: [swiftnflresponse.self, swiftnfldraft.self])
         }
     }
 }

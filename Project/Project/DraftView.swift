@@ -47,5 +47,5 @@ struct DraftView: View {
 
 #Preview {
     DraftView()
-        .modelContainer(for: [swiftscores.self, swiftnflresponse.self, swiftnfldraft.self])
+        .modelContainer(for: [swiftnflresponse.self, swiftnfldraft.self])
 }

@@ -111,8 +111,6 @@ class GameViewModel: ObservableObject{
 
     func getJsonData(api: String, whichapi: Int) {
         
-        
-        
         let semaphore = DispatchSemaphore (value: 0)
 
         var request = URLRequest(url: URL(string: api)!,timeoutInterval: Double.infinity)
@@ -123,12 +121,8 @@ class GameViewModel: ObservableObject{
         } else if whichapi == 1 {
             request.addValue(Secrets.apisportsio, forHTTPHeaderField: "x-rapidapi-key")
             request.addValue("v1.american-football.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
-        } else if whichapi == 2{
-            request.addValue("application/json", forHTTPHeaderField: "accept")
-            request.addValue("Bearer \(Secrets.collegeapi)", forHTTPHeaderField: "Authorization")
         }
-        
-
+    
         request.httpMethod = "GET"
 
         let task = URLSession.shared.dataTask(with: request) { data, response, error in

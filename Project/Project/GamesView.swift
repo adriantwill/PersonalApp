@@ -88,5 +88,5 @@ struct DetailView: View {
 }
 #Preview {
     GamesView()
-        .modelContainer(for: [swiftscores.self, swiftnflresponse.self, swiftnfldraft.self])
+        .modelContainer(for: [swiftnflresponse.self, swiftnfldraft.self])
 }
