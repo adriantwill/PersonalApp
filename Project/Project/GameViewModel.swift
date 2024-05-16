@@ -15,46 +15,47 @@ class GameViewModel: ObservableObject{
     @Published var bigboards = [bigboard]()
     @Published var searchCity = "Seattle"
     @Published var searchText = ""
-    @Published var favnflteam = ""
-    @Published var favnbateam = ""
+    @Published var favnflteam = TeamInfo(name: "", code: "", nickname: "", id: -1)
+    @Published var favnbateam = TeamInfo(name: "", code: "", nickname: "", id: -1)
     @Published var favgames = favgame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philadelphia 76ers", hscore: "103", ascore: "104", time: "April 14 7:00PM", hrecord: "38-8", arecord: "39-7")
     @Published var test: games
     @Published var test1: nflstandings
     @Published var test2: [nfldraft]
+    @Published var test3: NBATeamResponse
     @Published var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @Published var stadiums = maplocations()
 
     @Published var nbateam = TeamContainer(teams: [
-            Team(name: "Atlanta Hawks", code: "ATL", nickname: "Hawks", id: 1),
-            Team(name: "Boston Celtics", code: "BOS", nickname: "Celtics", id: 2),
-            Team(name: "Brooklyn Nets", code: "BKN", nickname: "Nets", id: 4),
-            Team(name: "Charlotte Hornets", code: "CHA", nickname: "Hornets", id: 5),
-            Team(name: "Chicago Bulls", code: "CHI", nickname: "Bulls", id: 6),
-            Team(name: "Cleveland Cavaliers", code: "CLE", nickname: "Cavaliers", id: 7),
-            Team(name: "Dallas Mavericks", code: "DAL", nickname: "Mavericks", id: 8),
-            Team(name: "Denver Nuggets", code: "DEN", nickname: "Nuggets", id: 9),
-            Team(name: "Detroit Pistons", code: "DET", nickname: "Pistons", id: 10),
-            Team(name: "Golden State Warriors", code: "GSW", nickname: "Warriors", id: 11),
-            Team(name: "Houston Rockets", code: "HOU", nickname: "Rockets", id: 14),
-            Team(name: "Indiana Pacers", code: "IND", nickname: "Pacers", id: 15),
-            Team(name: "Los Angeles Clippers", code: "LAC", nickname: "Clippers", id: 16),
-            Team(name: "Los Angeles Lakers", code: "LAL", nickname: "Lakers", id: 17),
-            Team(name: "Memphis Grizzlies", code: "MEM", nickname: "Grizzlies", id: 19),
-            Team(name: "Miami Heat", code: "MIA", nickname: "Heat", id: 20),
-            Team(name: "Milwaukee Bucks", code: "MIL", nickname: "Bucks", id: 21),
-            Team(name: "Minnesota Timberwolves", code: "MIN", nickname: "Timberwolves", id: 22),
-            Team(name: "New Orleans Pelicans", code: "NOP", nickname: "Pelicans", id: 23),
-            Team(name: "New York Knicks", code: "NYK", nickname: "Knicks", id: 24),
-            Team(name: "Oklahoma City Thunder", code: "OKC", nickname: "Thunder", id: 25),
-            Team(name: "Orlando Magic", code: "ORL", nickname: "Magic", id: 26),
-            Team(name: "Philadelphia 76ers", code: "PHI", nickname: "76ers", id: 27),
-            Team(name: "Phoenix Suns", code: "PHX", nickname: "Suns", id: 28),
-            Team(name: "Portland Trail Blazers", code: "POR", nickname: "Trail Blazers", id: 29),
-            Team(name: "Sacramento Kings", code: "SAC", nickname: "Kings", id: 30),
-            Team(name: "San Antonio Spurs", code: "SAS", nickname: "Spurs", id: 31),
-            Team(name: "Toronto Raptors", code: "TOR", nickname: "Raptors", id: 38),
-            Team(name: "Utah Jazz", code: "UTA", nickname: "Jazz", id: 40),
-            Team(name: "Washington Wizards", code: "WAS", nickname: "Wizards", id: 41)
+        TeamInfo(name: "Atlanta Hawks", code: "ATL", nickname: "Hawks", id: 1),
+        TeamInfo(name: "Boston Celtics", code: "BOS", nickname: "Celtics", id: 2),
+        TeamInfo(name: "Brooklyn Nets", code: "BKN", nickname: "Nets", id: 4),
+        TeamInfo(name: "Charlotte Hornets", code: "CHA", nickname: "Hornets", id: 5),
+        TeamInfo(name: "Chicago Bulls", code: "CHI", nickname: "Bulls", id: 6),
+        TeamInfo(name: "Cleveland Cavaliers", code: "CLE", nickname: "Cavaliers", id: 7),
+        TeamInfo(name: "Dallas Mavericks", code: "DAL", nickname: "Mavericks", id: 8),
+        TeamInfo(name: "Denver Nuggets", code: "DEN", nickname: "Nuggets", id: 9),
+        TeamInfo(name: "Detroit Pistons", code: "DET", nickname: "Pistons", id: 10),
+        TeamInfo(name: "Golden State Warriors", code: "GSW", nickname: "Warriors", id: 11),
+        TeamInfo(name: "Houston Rockets", code: "HOU", nickname: "Rockets", id: 14),
+        TeamInfo(name: "Indiana Pacers", code: "IND", nickname: "Pacers", id: 15),
+        TeamInfo(name: "Los Angeles Clippers", code: "LAC", nickname: "Clippers", id: 16),
+        TeamInfo(name: "Los Angeles Lakers", code: "LAL", nickname: "Lakers", id: 17),
+        TeamInfo(name: "Memphis Grizzlies", code: "MEM", nickname: "Grizzlies", id: 19),
+        TeamInfo(name: "Miami Heat", code: "MIA", nickname: "Heat", id: 20),
+        TeamInfo(name: "Milwaukee Bucks", code: "MIL", nickname: "Bucks", id: 21),
+        TeamInfo(name: "Minnesota Timberwolves", code: "MIN", nickname: "Timberwolves", id: 22),
+        TeamInfo(name: "New Orleans Pelicans", code: "NOP", nickname: "Pelicans", id: 23),
+        TeamInfo(name: "New York Knicks", code: "NYK", nickname: "Knicks", id: 24),
+        TeamInfo(name: "Oklahoma City Thunder", code: "OKC", nickname: "Thunder", id: 25),
+        TeamInfo(name: "Orlando Magic", code: "ORL", nickname: "Magic", id: 26),
+        TeamInfo(name: "Philadelphia 76ers", code: "PHI", nickname: "76ers", id: 27),
+        TeamInfo(name: "Phoenix Suns", code: "PHX", nickname: "Suns", id: 28),
+        TeamInfo(name: "Portland Trail Blazers", code: "POR", nickname: "Trail Blazers", id: 29),
+        TeamInfo(name: "Sacramento Kings", code: "SAC", nickname: "Kings", id: 30),
+        TeamInfo(name: "San Antonio Spurs", code: "SAS", nickname: "Spurs", id: 31),
+        TeamInfo(name: "Toronto Raptors", code: "TOR", nickname: "Raptors", id: 38),
+        TeamInfo(name: "Utah Jazz", code: "UTA", nickname: "Jazz", id: 40),
+        TeamInfo(name: "Washington Wizards", code: "WAS", nickname: "Wizards", id: 41)
     ])
 
     @Published var nflteams = [
@@ -107,6 +108,7 @@ class GameViewModel: ObservableObject{
         let responsenfl = nflresponse(division: "AFC South", position: 4, team: nflteam, won: 0, lost: 0, ties: 0)
         test1 = nflstandings(results: 0, response: [responsenfl])
         test2 = [nfldraft(collegeTeam: "USC", nflTeam: "Carolina", overall: 0, name: "Caleb Williams", position: "QB")]
+        test3 = NBATeamResponse(team: Team(id: "", uid: "", slug: "", location: "", name: "", abbreviation: "", displayName: "", shortDisplayName: "", color: "", alternateColor: "", isActive: true, record: Record(items: [RecordItem(description: "", type: "", summary: "", stats: [Stat(name: "", value: 0.0)])]), nextEvent: [NextEvent(id: "", date: "", name: "", shortName: "", season: Season(year: 0, displayName: ""), seasonType: SeasonType(id: "", type: 0, name: "", abbreviation: ""), timeValid: true, competitions: [Competition(id: "", date: "", attendance: 0, type: CompetitionType(id: "", text: "", abbreviation: "", slug: "", type: ""), timeValid: true, neutralSite: true, boxscoreAvailable: true, ticketsAvailable: true, competitors: [Competitor(id: "", type: "", order: 0, homeAway: "", team: CompetitorTeam(id: "", location: "", abbreviation: "", displayName: "", shortDisplayName: ""))], notes: [Note(type: "", headline: "")], broadcasts: [Broadcast(type: BroadcastType(id: "", shortName: ""), market: Market(id: "", type: ""), media: Media(shortName: ""), lang: "", region: "")], tickets: [Ticket(id: "", summary: "", description: "", maxPrice: 0.0, startingPrice: 0.0, numberAvailable: 0, totalPostings: 0)], status: Status(clock: 0.0, displayClock: "", period: 0, type: StatusType(id: "", name: "", state: "", completed: true, description: "", detail: "", shortDetail: "")))])], standingSummary: ""))
     }
 
     func getJsonData(api: String, whichapi: Int) {
@@ -149,6 +151,11 @@ class GameViewModel: ObservableObject{
                 } else if whichapi == 2{
                     let decodedData = try JSONDecoder().decode([nfldraft].self, from: data)
                     self.test2 = decodedData
+                } else if whichapi == 3{
+                    let decodedData = try JSONDecoder().decode(NBATeamResponse.self, from: data)
+                    DispatchQueue.main.async {
+                        self.test3 = decodedData
+                    }
                 }
             } catch {
                 print("error: \(error)")
@@ -170,7 +177,7 @@ class GameViewModel: ObservableObject{
     
     func convertUTCtoPacificTime(utcDate: String, long: String) -> String {
         // Create a DateFormatter to parse the UTC date string
-        if (long == "Scheduled") {
+        if (long == "Scheduled" || long == "STATUS_SCHEDULED") {
             let utcFormatter = DateFormatter()
             utcFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
             utcFormatter.timeZone = TimeZone(secondsFromGMT: 0) // UTC time zone
@@ -187,19 +194,13 @@ class GameViewModel: ObservableObject{
             
             // Format the date into Pacific Time string
             return pacificFormatter.string(from: date)
-        } else if (long == "Finished") {
+        } else if (long == "Finished" || long == "STATUS_FINAL") {
             return "Finished"
         } else {
             return "Live"
         }
-        
     }
 }
-
-func findFirstScheduledGame(games: [response]) -> response? {
-    return games.first { $0.status.long == "Scheduled" }
-}
-
 
 
         
