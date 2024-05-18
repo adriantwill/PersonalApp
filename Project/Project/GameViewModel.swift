@@ -17,7 +17,6 @@ class GameViewModel: ObservableObject{
     @Published var searchText = ""
     @Published var favnflteam = TeamInfo(name: "", code: "", nickname: "", id: -1)
     @Published var favnbateam = TeamInfo(name: "", code: "", nickname: "", id: -1)
-    @Published var favgames = favgame(home: "MIL", away: "PHI", homefull: "Milwaukee Bucks", awayfull: "Philadelphia 76ers", hscore: "103", ascore: "104", time: "April 14 7:00PM", hrecord: "38-8", arecord: "39-7")
     @Published var test: games
     @Published var test1: nflstandings
     @Published var test2: [nfldraft]
@@ -108,7 +107,7 @@ class GameViewModel: ObservableObject{
         let responsenfl = nflresponse(division: "AFC South", position: 4, team: nflteam, won: 0, lost: 0, ties: 0)
         test1 = nflstandings(results: 0, response: [responsenfl])
         test2 = [nfldraft(collegeTeam: "USC", nflTeam: "Carolina", overall: 0, name: "Caleb Williams", position: "QB")]
-        test3 = NBATeamResponse(team: Team(id: "", uid: "", slug: "", location: "", name: "", abbreviation: "", displayName: "", shortDisplayName: "", color: "", alternateColor: "", isActive: true, record: Record(items: [RecordItem(description: "", type: "", summary: "", stats: [Stat(name: "", value: 0.0)])]), nextEvent: [NextEvent(id: "", date: "", name: "", shortName: "", season: Season(year: 0, displayName: ""), seasonType: SeasonType(id: "", type: 0, name: "", abbreviation: ""), timeValid: true, competitions: [Competition(id: "", date: "", attendance: 0, type: CompetitionType(id: "", text: "", abbreviation: "", slug: "", type: ""), timeValid: true, neutralSite: true, boxscoreAvailable: true, ticketsAvailable: true, competitors: [Competitor(id: "", type: "", order: 0, homeAway: "", team: CompetitorTeam(id: "", location: "", abbreviation: "", displayName: "", shortDisplayName: ""))], notes: [Note(type: "", headline: "")], broadcasts: [Broadcast(type: BroadcastType(id: "", shortName: ""), market: Market(id: "", type: ""), media: Media(shortName: ""), lang: "", region: "")], tickets: [Ticket(id: "", summary: "", description: "", maxPrice: 0.0, startingPrice: 0.0, numberAvailable: 0, totalPostings: 0)], status: Status(clock: 0.0, displayClock: "", period: 0, type: StatusType(id: "", name: "", state: "", completed: true, description: "", detail: "", shortDetail: "")))])], standingSummary: ""))
+        test3 = NBATeamResponse(team: Team(id: "", uid: "", slug: "", location: "", name: "", abbreviation: "", displayName: "", shortDisplayName: "", color: "", alternateColor: "", isActive: true, record: Record(items: [RecordItem(description: "", type: "", summary: "", stats: [Stat(name: "", value: 0.0)])]), nextEvent: [NextEvent(id: "", date: "", name: "", shortName: "", season: Season(year: 0, displayName: ""), seasonType: SeasonType(id: "", type: 0, name: "", abbreviation: ""), timeValid: true, competitions: [Competition(id: "", date: "", attendance: 0, type: CompetitionType(id: "", text: "", abbreviation: "", slug: "", type: ""), timeValid: true, neutralSite: true, boxscoreAvailable: true, ticketsAvailable: true, competitors: [Competitor(id: "", type: "", order: 0, homeAway: "", team: CompetitorTeam(id: "", location: "", abbreviation: "", displayName: "", shortDisplayName: ""), score: Score(value: 0.0, displayValue: ""), record: [Records(id: "", abbreviation: "", displayName: "", shortDisplayName: "", description: "", type: "", displayValue: "")]), Competitor(id: "", type: "", order: 0, homeAway: "", team: CompetitorTeam(id: "", location: "", abbreviation: "", displayName: "", shortDisplayName: ""), score: Score(value: 0.0, displayValue: ""), record: [Records(id: "", abbreviation: "", displayName: "", shortDisplayName: "", description: "", type: "", displayValue: "")])], notes: [Note(type: "", headline: "")], broadcasts: [Broadcast(type: BroadcastType(id: "", shortName: ""), market: Market(id: "", type: ""), media: Media(shortName: ""), lang: "", region: "")], tickets: [Ticket(id: "", summary: "", description: "", maxPrice: 0.0, startingPrice: 0.0, numberAvailable: 0, totalPostings: 0)], status: Status(clock: 0.0, displayClock: "", period: 0, type: StatusType(id: "", name: "", state: "", completed: true, description: "", detail: "", shortDetail: "")))])], standingSummary: ""))
     }
 
     func getJsonData(api: String, whichapi: Int) {
@@ -178,22 +177,23 @@ class GameViewModel: ObservableObject{
     func convertUTCtoPacificTime(utcDate: String, long: String) -> String {
         // Create a DateFormatter to parse the UTC date string
         if (long == "Scheduled" || long == "STATUS_SCHEDULED") {
-            let utcFormatter = DateFormatter()
-            utcFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-            utcFormatter.timeZone = TimeZone(secondsFromGMT: 0) // UTC time zone
-            
-            // Convert the string to a Date object
-            guard let date = utcFormatter.date(from: utcDate) else {
-                return "Invalid date"
-            }
-            
-            // Create a DateFormatter to output the date in Pacific Time
-            let pacificFormatter = DateFormatter()
-            pacificFormatter.dateFormat = "HH:mm"
-            pacificFormatter.timeZone = TimeZone(identifier: "America/Los_Angeles") // Pacific Time zone
-            
-            // Format the date into Pacific Time string
-            return pacificFormatter.string(from: date)
+                // Define the input date format
+                let inputFormatter = DateFormatter()
+                inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mmZ"
+                inputFormatter.timeZone = TimeZone(abbreviation: "UTC")
+                
+                // Convert the input date string to a Date object
+                guard let date = inputFormatter.date(from: utcDate) else {
+                    return "Invalid date"
+                }
+                
+                // Define the output date format
+                let outputFormatter = DateFormatter()
+                outputFormatter.dateFormat = "MMM d h:mm a 'PST'"
+                outputFormatter.timeZone = TimeZone(identifier: "America/Los_Angeles")
+                
+                // Convert the Date object to the desired output format
+                return outputFormatter.string(from: date)
         } else if (long == "Finished" || long == "STATUS_FINAL") {
             return "Finished"
         } else {

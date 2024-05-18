@@ -15,7 +15,7 @@ struct HomeView: View {
                 VStack {
                     Spacer()
                         .frame(height: 30)
-                    Text("Upcoming Games:")
+                    Text("Current Live Games:")
                         .multilineTextAlignment(.leading)
                         .bold()
                     ScrollView(.horizontal, content: {
@@ -33,12 +33,12 @@ struct HomeView: View {
                                         .shadow(color: Color.black.opacity(0.3), radius: 3, x: 2, y: 4)
                                         .padding(10)
                                     VStack(alignment: .leading, spacing: 0) {
-                                        Text("\(gameVM.convertUTCtoPacificTime(utcDate: index.date.start, long: index.status.long))")
+                                        Text("\(index.status.clock ?? "0")")
                                             .font(.body)
                                             .foregroundColor(.red)
                                             
-                                            .padding(.top, -20)
-                                            .padding()
+                                            .padding(.leading, 40)
+                                            .padding(.bottom, 10)
                                         HStack {
                                             Image("\(index.teams.visitors.name)") // Replace with your image name
                                                 .resizable()
@@ -87,7 +87,6 @@ struct HomeView: View {
                         VStack(alignment: .leading, spacing: 0) {
                             Text("\(gameVM.convertUTCtoPacificTime(utcDate: gameVM.test3.team.nextEvent[0].date, long: gameVM.test3.team.nextEvent[0].competitions[0].status.type.name))")
                                 .font(.body)
-                                .foregroundColor(.red)
                                 .padding(.top, -20)
                                 .padding()
                             HStack {
@@ -97,14 +96,18 @@ struct HomeView: View {
                                     .frame(width: 32, height: 32)
                                 Text(gameVM.test3.team.nextEvent[0].competitions[0].competitors[0].team.abbreviation)
                                     .padding(.trailing, 40)
+                                Text(gameVM.test3.team.nextEvent[0].competitions[0].competitors[0].score?.displayValue ?? "Live")
+                                    .padding(.trailing, 40)
                             }
 
                             HStack {
-                                Image(gameVM.test3.team.displayName) // Replace with your image name
+                                Image(gameVM.test3.team.nextEvent[0].competitions[0].competitors[1].team.displayName) // Replace with your image name
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 32, height: 32)
-                                Text(gameVM.test3.team.abbreviation)
+                                Text(gameVM.test3.team.nextEvent[0].competitions[0].competitors[1].team.abbreviation)
+                                    .padding(.trailing, 40)
+                                Text(gameVM.test3.team.nextEvent[0].competitions[0].competitors[1].score?.displayValue ?? "Live")
                                     .padding(.trailing, 40)
                             }
                         }
@@ -161,6 +164,7 @@ struct HomeView: View {
                     
                     Spacer()
                 }
+                
                 .toolbar {
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         Menu {
@@ -180,11 +184,10 @@ struct HomeView: View {
                         }
                     }
                 }
-                .refreshable {
-                    gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?date=2024-04-30", whichapi: 0)
-                    gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?date=\(gameVM.getDate())", whichapi: 0)
-                    
-                }
+               
+            }
+            .refreshable {
+                gameVM.getJsonData(api: "https://v2.nba.api-sports.io/games?date=\(gameVM.getDate())", whichapi: 0)
             }
         }
     }

@@ -61,24 +61,6 @@ struct draftteam: Hashable {
         }
 }
 
-struct favgame {
-    var home: String
-    var away: String
-    var homefull: String
-    var awayfull: String
-    var hscore: String
-    var ascore: String
-    var hlogopic: Image { // calculable property not used by hashing
-           Image(homefull)
-        }
-    var alogopic: Image { // calculable property not used by hashing
-           Image(awayfull)
-        }
-    var time: String
-    var hrecord: String
-    var arecord: String
-}
-
 
 //DRAFT API
 @Model
@@ -280,7 +262,7 @@ struct Competition: Codable {
     let competitors: [Competitor]
     let notes: [Note]
     let broadcasts: [Broadcast]
-    let tickets: [Ticket]
+    let tickets: [Ticket]?
     let status: Status
 }
 
@@ -298,6 +280,8 @@ struct Competitor: Codable {
     let order: Int
     let homeAway: String
     let team: CompetitorTeam
+    let score: Score?
+    let record: [Records]?
 }
 
 struct CompetitorTeam: Codable {
@@ -306,6 +290,21 @@ struct CompetitorTeam: Codable {
     let abbreviation: String
     let displayName: String
     let shortDisplayName: String
+}
+
+struct Score: Codable {
+    let value: Double
+    let displayValue: String
+}
+
+struct Records: Codable {
+    let id: String
+    let abbreviation: String?
+    let displayName: String
+    let shortDisplayName: String
+    let description: String
+    let type: String
+    let displayValue: String
 }
 
 struct Note: Codable {
