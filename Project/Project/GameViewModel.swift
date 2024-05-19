@@ -8,23 +8,23 @@
 import Foundation
 import MapKit
 import _MapKit_SwiftUI
+import SwiftUI
 
 
 class GameViewModel: ObservableObject{
-    @Published var draftteams = [draftteam]()
-    @Published var bigboards = [bigboard]()
     @Published var searchCity = "Seattle"
     @Published var searchText = ""
     @Published var favnflteam = TeamInfo(name: "", code: "", nickname: "", id: -1)
     @Published var favnbateam = TeamInfo(name: "", code: "", nickname: "", id: -1)
-    @Published var test: games
+    @Published var test0: NBAStandings
     @Published var test1: nflstandings
     @Published var test2: [nfldraft]
     @Published var test3: NBATeamResponse
+    @Published var test4: NBADataEvent
     @Published var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @Published var stadiums = maplocations()
 
-    @Published var nbateam = TeamContainer(teams: [
+    @Published var nbateam = [
         TeamInfo(name: "Atlanta Hawks", code: "ATL", nickname: "Hawks", id: 1),
         TeamInfo(name: "Boston Celtics", code: "BOS", nickname: "Celtics", id: 2),
         TeamInfo(name: "Brooklyn Nets", code: "BKN", nickname: "Nets", id: 4),
@@ -53,9 +53,9 @@ class GameViewModel: ObservableObject{
         TeamInfo(name: "Sacramento Kings", code: "SAC", nickname: "Kings", id: 30),
         TeamInfo(name: "San Antonio Spurs", code: "SAS", nickname: "Spurs", id: 31),
         TeamInfo(name: "Toronto Raptors", code: "TOR", nickname: "Raptors", id: 38),
-        TeamInfo(name: "Utah Jazz", code: "UTA", nickname: "Jazz", id: 40),
+        TeamInfo(name: "Utah Jazz", code: "UTH", nickname: "Jazz", id: 40),
         TeamInfo(name: "Washington Wizards", code: "WAS", nickname: "Wizards", id: 41)
-    ])
+    ]
 
     @Published var nflteams = [
         "Arizona Cardinals",
@@ -93,21 +93,12 @@ class GameViewModel: ObservableObject{
     ]
     init()
     {
-        let teamscore = teamscores(win: 100, loss: 90, linescore: [""], points: 0)
-        let scores = scores(visitors: teamscore, home: teamscore)
-        let vteamid = teamid(id: 0, name: "LA Clippers", nickname: "Clippers", code: "LAC", logo: "")
-        let hteamid = teamid(id: 0, name: "Dallas Mavericks", nickname: "Mavericks", code: "MAV", logo: "")
-        let team = teams(visitors: vteamid, home: hteamid)
-        let period = periods(current: 0, total: 0, endOfPeriod: true)
-        let stat = status(halftime: true, short: 0, long: "")
-        let dat = date(start: "2024-05-04T01:30:00.000Z")
-        let res = response(id: 0, league: "", season: 0, date: dat, stage: 0, status: stat, periods: period, teams: team, scores: scores)
-        test = games(results: 0, response: [res])
-        let nflteam = nflteam(id: 0, name: "Tennessee Titans")
-        let responsenfl = nflresponse(division: "AFC South", position: 4, team: nflteam, won: 0, lost: 0, ties: 0)
-        test1 = nflstandings(results: 0, response: [responsenfl])
-        test2 = [nfldraft(collegeTeam: "USC", nflTeam: "Carolina", overall: 0, name: "Caleb Williams", position: "QB")]
-        test3 = NBATeamResponse(team: Team(id: "", uid: "", slug: "", location: "", name: "", abbreviation: "", displayName: "", shortDisplayName: "", color: "", alternateColor: "", isActive: true, record: Record(items: [RecordItem(description: "", type: "", summary: "", stats: [Stat(name: "", value: 0.0)])]), nextEvent: [NextEvent(id: "", date: "", name: "", shortName: "", season: Season(year: 0, displayName: ""), seasonType: SeasonType(id: "", type: 0, name: "", abbreviation: ""), timeValid: true, competitions: [Competition(id: "", date: "", attendance: 0, type: CompetitionType(id: "", text: "", abbreviation: "", slug: "", type: ""), timeValid: true, neutralSite: true, boxscoreAvailable: true, ticketsAvailable: true, competitors: [Competitor(id: "", type: "", order: 0, homeAway: "", team: CompetitorTeam(id: "", location: "", abbreviation: "", displayName: "", shortDisplayName: ""), score: Score(value: 0.0, displayValue: ""), record: [Records(id: "", abbreviation: "", displayName: "", shortDisplayName: "", description: "", type: "", displayValue: "")]), Competitor(id: "", type: "", order: 0, homeAway: "", team: CompetitorTeam(id: "", location: "", abbreviation: "", displayName: "", shortDisplayName: ""), score: Score(value: 0.0, displayValue: ""), record: [Records(id: "", abbreviation: "", displayName: "", shortDisplayName: "", description: "", type: "", displayValue: "")])], notes: [Note(type: "", headline: "")], broadcasts: [Broadcast(type: BroadcastType(id: "", shortName: ""), market: Market(id: "", type: ""), media: Media(shortName: ""), lang: "", region: "")], tickets: [Ticket(id: "", summary: "", description: "", maxPrice: 0.0, startingPrice: 0.0, numberAvailable: 0, totalPostings: 0)], status: Status(clock: 0.0, displayClock: "", period: 0, type: StatusType(id: "", name: "", state: "", completed: true, description: "", detail: "", shortDetail: "")))])], standingSummary: ""))
+        test0 = NBAStandings(get: "", parameters: Parameters(league: "", season: ""), errors: [], results: 0, response: [])
+        test1 = nflstandings(results: 0, response: [])
+        test2 = []
+        test3 = NBATeamResponse(team: Team(id: "", uid: "", slug: "", location: "", name: "", abbreviation: "", displayName: "", shortDisplayName: "", color: "", alternateColor: "", isActive: true, record: Record(items: []), nextEvent: [], standingSummary: ""))
+        test4 = NBADataEvent(leagues: [], season: SeasonEvent(type: 0, year: 0), day: DayEvent(date: ""), events: [])
+        
     }
 
     func getJsonData(api: String, whichapi: Int) {
@@ -138,11 +129,12 @@ class GameViewModel: ObservableObject{
             }
             do {
                 if whichapi == 0{
-                    let decodedData = try JSONDecoder().decode(games.self, from: data)
+                    let decodedData = try JSONDecoder().decode(NBAStandings.self, from: data)
                     DispatchQueue.main.async {
-                        self.test = decodedData
+                        self.test0 = decodedData
                     }
-                } else if whichapi == 1{
+                }
+                else if whichapi == 1{
                     let decodedData = try JSONDecoder().decode(nflstandings.self, from: data)
                     DispatchQueue.main.async {
                         self.test1 = decodedData
@@ -155,6 +147,14 @@ class GameViewModel: ObservableObject{
                     DispatchQueue.main.async {
                         self.test3 = decodedData
                     }
+                }
+                else if whichapi == 4{
+                   let decodedData = try JSONDecoder().decode(NBADataEvent.self, from: data)
+                   DispatchQueue.main.async {
+                       self.test4 = decodedData
+                   }
+                } else{
+                    print("major error")
                 }
             } catch {
                 print("error: \(error)")
@@ -200,7 +200,48 @@ class GameViewModel: ObservableObject{
             return "Live"
         }
     }
+    
+    func convertDateString(_ input: String) -> String {
+        // Split the input string to separate the date and time parts
+        let components = input.split(separator: "-")
+        guard components.count > 1 else {
+            return "bad"
+        }
+        
+        // Trim any leading/trailing whitespaces and return the time part
+        let timePart = components[1].trimmingCharacters(in: .whitespacesAndNewlines)
+        return timePart
+    }
+    
+    func index(fullname: String) -> Int {
+        for (index, team) in nbateam.enumerated() {
+            if team.name == fullname {
+                return index
+            }
+        }
+        return -1
+    }
 }
 
-
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8 * 4), (int >> 4 * 4) & 0xF, int & 0xF)
+            self.init(red: Double(r) / 15, green: Double(g) / 15, blue: Double(b) / 15, opacity: Double(a) / 255)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+            self.init(red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: Double(a) / 255)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+            self.init(red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: Double(a) / 255)
+        default:
+            self.init(red: 1, green: 1, blue: 1, opacity: 1)
+        }
+    }
+}
         

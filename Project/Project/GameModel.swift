@@ -42,25 +42,7 @@ struct maplocations {
     var fortyniners: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.4033, longitude: -121.9694)
 }
 
-struct bigboard: Hashable {
-    var name: String
-    var position: String
-    var school: String
-    var hlogopic: Image { // calculable property not used by hashing
-           Image(name)
-        }
-}
-
-struct draftteam: Hashable {
-    var name: String
-    var abrevname: String
-    var winloss: String
-    var sos: String
-    var hlogopic: Image { // calculable property not used by hashing
-           Image(name)
-        }
-}
-
+//VIEW STRUCTS
 
 //DRAFT API
 @Model
@@ -127,66 +109,64 @@ struct nflteam: Decodable, Hashable{
     var name: String
 }
 
-//NBA GAMES API
-struct games: Decodable, Hashable {
-    var results: Int
-    var response: [response]
+//NBA RANKINGS API SPORTS
+
+struct NBAStandings: Codable, Hashable {
+    let get: String
+    let parameters: Parameters
+    let errors: [String]
+    let results: Int
+    let response: [TeamResponse]
 }
 
-struct response: Decodable, Hashable{
-    var id: Int
-    var league: String
-    var season: Int
-    var date: date
-    var stage: Int
-    var status: status
-    var periods: periods
-    var teams: teams
-    var scores: scores
+struct Parameters: Codable, Hashable {
+    let league: String
+    let season: String
 }
 
-struct date: Decodable, Hashable{
-    var start: String
-    var end: String?
-    var duration: String?
+struct TeamResponse: Codable, Hashable {
+    let league: String
+    let season: Int
+    let team: NBATeamRankings
+    let conference: Conference
+    let division: Division
+    let win: NBARecordRankings
+    let loss: NBARecordRankings
+    let gamesBehind: String?
+    let streak: Int
+    let winStreak: Bool
+    let tieBreakerPoints: Int?
 }
 
-struct status: Decodable, Hashable{
-    var clock: String?
-    var halftime: Bool
-    var short: Int
-    var long: String
+struct NBATeamRankings: Codable, Hashable {
+    let id: Int
+    let name: String
+    let nickname: String
+    let code: String
+    let logo: String
 }
 
-struct periods: Decodable, Hashable{
-    var current: Int
-    var total: Int
-    var endOfPeriod: Bool
+struct Conference: Codable, Hashable {
+    let name: String
+    let rank: Int
+    let win: Int
+    let loss: Int
 }
 
-struct teams: Decodable, Hashable {
-    var visitors: teamid
-    var home: teamid
+struct Division: Codable, Hashable {
+    let name: String
+    let rank: Int
+    let win: Int
+    let loss: Int
+    let gamesBehind: String?
 }
 
-struct teamid: Decodable, Hashable{
-    var id: Int
-    var name: String
-    var nickname: String
-    var code: String
-    var logo: String
-}
-
-struct scores: Decodable, Hashable{
-    var visitors: teamscores
-    var home: teamscores
-}
-
-struct teamscores: Decodable, Hashable{
-    var win: Int
-    var loss: Int
-    var linescore: [String]
-    var points: Int?
+struct NBARecordRankings: Codable, Hashable {
+    let home: Int
+    let away: Int
+    let total: Int
+    let percentage: String
+    let lastTen: Int
 }
 
 //ESPN NBA TEAM API
@@ -360,3 +340,334 @@ struct StatusType: Codable {
     let detail: String
     let shortDetail: String
 }
+
+//ESPN SCHEDULED API
+
+// Root struct
+struct NBADataEvent: Codable, Hashable {
+    let leagues: [LeagueEvent]
+    let season: SeasonEvent
+    let day: DayEvent
+    let events: [EventEvent]
+}
+
+// League struct
+struct LeagueEvent: Codable, Hashable {
+    let id: String
+    let uid: String
+    let name: String
+    let abbreviation: String
+    let slug: String
+    let season: LeagueSeasonEvent
+    let logos: [LogoEvent]
+    let calendarType: String
+    let calendarIsWhitelist: Bool
+    let calendarStartDate: String
+    let calendarEndDate: String
+    let calendar: [String]
+}
+
+struct LeagueSeasonEvent: Codable, Hashable {
+    let year: Int
+    let startDate: String
+    let endDate: String
+    let displayName: String
+    let type: SeasonTypeEvent
+}
+
+struct SeasonTypeEvent: Codable, Hashable {
+    let id: String
+    let type: Int
+    let name: String
+    let abbreviation: String
+}
+
+// Logo struct
+struct LogoEvent: Codable, Hashable {
+    let href: String
+    let width: Int
+    let height: Int
+    let alt: String
+    let rel: [String]
+    let lastUpdated: String
+}
+
+// Season struct
+struct SeasonEvent: Codable, Hashable {
+    let type: Int
+    let year: Int
+}
+
+// Day struct
+struct DayEvent: Codable, Hashable {
+    let date: String
+}
+
+// Event struct
+struct EventEvent: Codable, Hashable {
+    let id: String
+    let uid: String
+    let date: String
+    let name: String
+    let shortName: String
+    let season: EventSeasonEvent
+    let competitions: [CompetitionEvent]
+    let status: StatusEvent
+}
+
+struct EventSeasonEvent: Codable, Hashable {
+    let year: Int
+    let type: Int
+    let slug: String
+}
+
+struct CompetitionEvent: Codable, Hashable {
+    let id: String
+    let uid: String
+    let date: String
+    let attendance: Int
+    let type: CompetitionTypeEvent
+    let timeValid: Bool
+    let neutralSite: Bool
+    let conferenceCompetition: Bool
+    let playByPlayAvailable: Bool
+    let recent: Bool
+    let venue: VenueEvent
+    let competitors: [CompetitorEvent]
+    let notes: [NoteEvent]
+    let status: StatusEvent
+    let broadcasts: [BroadcastEvent]
+    let format: FormatEvent
+    let tickets: [TicketEvent]?
+    let startDate: String
+    let series: SeriesEvent
+    let odds: [OddsEvent]?
+}
+
+struct CompetitionTypeEvent: Codable, Hashable {
+    let id: String
+    let abbreviation: String
+}
+
+struct VenueEvent: Codable, Hashable {
+    let id: String
+    let fullName: String
+    let address: AddressEvent
+    let indoor: Bool
+}
+
+struct AddressEvent: Codable, Hashable {
+    let city: String
+    let state: String
+}
+
+struct CompetitorEvent: Codable, Hashable {
+    let id: String
+    let uid: String
+    let type: String
+    let order: Int
+    let homeAway: String
+    let team: TeamEvent
+    let score: String
+    let statistics: [StatisticEvent]
+    let records: [RecordEvent]
+    let leaders: [LeaderEvent]
+}
+
+struct TeamEvent: Codable, Hashable {
+    let id: String
+    let uid: String
+    let location: String
+    let name: String
+    let abbreviation: String
+    let displayName: String
+    let shortDisplayName: String
+    let color: String
+    let alternateColor: String
+    let isActive: Bool
+    let venue: VenueIDEvent
+    let logo: String
+}
+
+struct VenueIDEvent: Codable, Hashable {
+    let id: String
+}
+
+struct StatisticEvent: Codable, Hashable {
+    let name: String
+    let abbreviation: String
+    let displayValue: String
+    let rankDisplayValue: String?
+}
+
+struct RecordEvent: Codable, Hashable {
+    let name: String
+    let abbreviation: String?
+    let type: String
+    let summary: String
+}
+
+struct LeaderEvent: Codable, Hashable {
+    let name: String
+    let displayName: String
+    let shortDisplayName: String
+    let abbreviation: String
+    let leaders: [AthleteLeaderEvent]
+}
+
+struct AthleteLeaderEvent: Codable, Hashable {
+    let displayValue: String
+    let value: Double
+    let athlete: AthleteEvent
+    let team: TeamIDEvent
+}
+
+struct AthleteEvent: Codable, Hashable {
+    let id: String
+    let fullName: String
+    let displayName: String
+    let shortName: String
+    let headshot: String
+    let jersey: String
+    let position: PositionEvent
+    let team: TeamIDEvent
+    let active: Bool
+}
+
+struct TeamIDEvent: Codable, Hashable {
+    let id: String
+}
+
+struct PositionEvent: Codable, Hashable {
+    let abbreviation: String
+}
+
+struct LinkEvent: Codable, Hashable {
+    let rel: [String]
+    let href: String
+    let text: String?
+    let isExternal: Bool?
+    let isPremium: Bool?
+}
+
+struct NoteEvent: Codable, Hashable {
+    let type: String
+    let headline: String
+}
+
+struct StatusEvent: Codable, Hashable {
+    let clock: Int
+    let displayClock: String
+    let period: Int
+    let type: StatusTypeEvent
+}
+
+struct StatusTypeEvent: Codable, Hashable {
+    let id: String
+    let name: String
+    let state: String
+    let completed: Bool
+    let description: String
+    let detail: String
+    let shortDetail: String
+}
+
+struct BroadcastEvent: Codable, Hashable {
+    let market: String
+    let names: [String]
+}
+
+struct FormatEvent: Codable, Hashable {
+    let regulation: RegulationEvent
+}
+
+struct RegulationEvent: Codable, Hashable {
+    let periods: Int
+}
+
+struct TicketEvent: Codable, Hashable {
+    let summary: String
+    let numberAvailable: Int
+}
+
+struct SeriesEvent: Codable, Hashable {
+    let type: String
+    let title: String
+    let summary: String
+    let completed: Bool
+    let totalCompetitions: Int
+    let competitors: [SeriesCompetitorEvent]
+}
+
+struct SeriesCompetitorEvent: Codable, Hashable {
+    let id: String
+    let uid: String
+    let wins: Int
+    let ties: Int
+    let href: String
+}
+
+struct BroadcastTypeEvent: Codable, Hashable {
+    let id: String
+    let shortName: String
+}
+
+struct BroadcastMarketEvent: Codable, Hashable {
+    let id: String
+    let type: String
+}
+
+struct BroadcastMediaEvent: Codable, Hashable {
+    let shortName: String
+}
+
+struct OddsEvent: Codable, Hashable {
+    let provider: ProviderEvent
+    let details: String
+    let overUnder: Double
+    let spread: Double
+    let awayTeamOdds: TeamOddsEvent
+    let homeTeamOdds: TeamOddsEvent
+    let open: OddsDetailsEvent
+    let current: OddsDetailsEvent
+}
+
+struct ProviderEvent: Codable, Hashable {
+    let id: String
+    let name: String
+    let priority: Int
+}
+
+struct TeamOddsEvent: Codable, Hashable {
+    let favorite: Bool
+    let underdog: Bool
+    let team: TeamInfoEvent
+}
+
+struct TeamInfoEvent: Codable, Hashable {
+    let id: String
+    let abbreviation: String
+    let displayName: String
+    let shortDisplayName: String
+}
+
+struct OddsDetailsEvent: Codable, Hashable {
+    let over: OddsValueEvent
+    let under: OddsValueEvent
+    let total: OddsTotalEvent
+}
+
+struct OddsValueEvent: Codable, Hashable {
+    let value: Double
+    let displayValue: String
+    let alternateDisplayValue: String
+    let decimal: Double
+    let fraction: String
+    let american: String
+}
+
+struct OddsTotalEvent: Codable, Hashable {
+    let alternateDisplayValue: String
+    let american: String
+}
+
