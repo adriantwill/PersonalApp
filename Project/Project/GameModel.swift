@@ -170,6 +170,17 @@ struct NBARecordRankings: Codable, Hashable {
 }
 
 //ESPN NBA TEAM API
+
+@Model
+class SwiftDataNBATeam {
+    @Attribute(.unique) var iden: Int
+    var codename: String
+    init(iden: Int, codename: String) {
+        self.iden = iden
+        self.codename = codename
+    }
+}
+
 struct NBATeamResponse: Codable {
     let team: Team
 }
@@ -186,9 +197,19 @@ struct Team: Codable {
     let color: String
     let alternateColor: String
     let isActive: Bool
+    let logos: [Logo]
     let record: Record
     let nextEvent: [NextEvent]
     let standingSummary: String
+}
+
+struct Logo: Codable {
+    let href: String
+    let width: Int
+    let height: Int
+    let alt: String
+    let rel: [String]
+    let lastUpdated: String
 }
 
 struct Record: Codable {
@@ -270,6 +291,7 @@ struct CompetitorTeam: Codable {
     let abbreviation: String
     let displayName: String
     let shortDisplayName: String
+    let logos: [Logo]
 }
 
 struct Score: Codable {
