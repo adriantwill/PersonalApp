@@ -73,6 +73,9 @@ struct HomeView: View {
                         .bold()
                         .font(.title2)
                         .padding(.bottom, 15)
+                    NavigationLink(value: gameVM.test3) {
+                        
+                        
                         ZStack{
                             Rectangle ()
                                 .fill(Color.white)
@@ -84,83 +87,93 @@ struct HomeView: View {
                                 )
                                 .shadow(color: Color.black.opacity(0.3), radius: 3, x: 2, y: 4)
                                 .padding(10)
-                       
-                            if (SwiftDataFavNBA.count == 0) {
-                                Text("Select Favorite Team Above")
-                            } else {
-            
-                                Rectangle()
+                            
+                            /*      if (SwiftDataFavNBA.count == 0) {
+                             Text("Select Favorite Team Above")
+                             } else
+                             if (gameVM.test3.team.id == "") {
+                             ProgressView()
+                             .onAppear{
+                             gameVM.getJsonData(api: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/\(SwiftDataFavNBA.last?.codename ?? "")", whichapi: 3)
+                             }
+                             } else { */
+                            Rectangle()
                                 .fill(Color(hex: "#\(gameVM.test3.team.color)"))
-                                    .frame(width: 350, height: 40)
-                                    .padding(.bottom, 120)
-                                    .cornerRadius(10)
-                                        
+                                .frame(width: 350, height: 40)
+                                .padding(.bottom, 120)
+                                .cornerRadius(10)
+                            
+                            
+                            VStack {
+                                HStack {
+                                    Text(gameVM.test3.team.displayName)
+                                        .foregroundStyle(Color(hex: "#\(gameVM.test3.team.alternateColor)"))
+                                        .bold()
+                                        .font(.title3)
                                     
+                                    AsyncImage(url: URL(string: gameVM.test3.team.logos[0].href), content: { returnedImage in
+                                        returnedImage
+                                            .resizable()
+                                            .frame(width: 30, height: 30)
+                                        
+                                    }, placeholder: {
+                                        ProgressView()
+                                    })
+                                }
+                                .offset(y:-18)
                                 VStack {
                                     HStack {
-                                        Text(gameVM.test3.team.displayName)
-                                            .foregroundStyle(Color(hex: "#\(gameVM.test3.team.alternateColor)"))
-                                            .bold()
-                                            .font(.title3)
-                                            
-                                        AsyncImage(url: URL(string: gameVM.test3.team.logos[0].href), content: { returnedImage in
-                                            returnedImage
-                                                .resizable()
-                                                .frame(width: 30, height: 30)
-                                               
-                                        }, placeholder: {
-                                            ProgressView()
-                                        })
-                                    }
-                                    .offset(y:-18)
-                                    VStack {
-                                        HStack {
-                                            VStack(spacing: 0) {
-                                                if (gameVM.test3.team.nextEvent[0].competitions[0].status.type.name == "STATUS_FINAL"){
-                                                    Text("Last Event:")
-                                                        .offset(y:-5)
-                                                } else{
-                                                    Text("Upcoming Event:")
-                                                        .offset(y:-5)
-                                                }
-                                                Text(gameVM.test3.team.nextEvent[0].competitions[0].status.type.shortDetail)
-                                                    .padding(.top, 5)
-                                                
-                                                HStack {
-                                                    if (gameVM.test3.team.nextEvent[0].competitions[0].competitors[0].id == gameVM.test3.team.id){
-                                                        Text("VS \(gameVM.test3.team.nextEvent[0].competitions[0].competitors[1].team.location)")
-                                                        AsyncImage(url: URL(string: gameVM.test3.team.nextEvent[0].competitions[0].competitors[1].team.logos[0].href), content: { returnedImage in
-                                                            returnedImage
-                                                                .resizable()
-                                                                .frame(width: 32, height: 32)
-                                                        }, placeholder: {
-                                                            ProgressView()
-                                                        })
-                                                    } else {
-                                                        Text("@ \(gameVM.test3.team.nextEvent[0].competitions[0].competitors[0].team.location)")
-                                                        AsyncImage(url: URL(string: gameVM.test3.team.nextEvent[0].competitions[0].competitors[0].team.logos[0].href), content: { returnedImage in
-                                                            returnedImage
-                                                                .resizable()
-                                                                .frame(width: 32, height: 32)
-                                                        }, placeholder: {
-                                                            ProgressView()
-                                                        })
-                                                    }
-                                                }
+                                        VStack(spacing: 0) {
+                                            if (gameVM.test3.team.nextEvent[0].competitions[0].status.type.name == "STATUS_FINAL"){
+                                                Text("Last Event:")
+                                                    .offset(y:-5)
+                                            } else if (gameVM.test3.team.nextEvent[0].competitions[0].status.type.name == "STATUS_SCHEDULED"){
+                                                Text("Upcoming Event:")
+                                                    .offset(y:-5)
+                                            } else {
+                                                Text("Live")
+                                                    .offset(y:-5)
+                                                    .foregroundColor(.red)
                                             }
-                                            Spacer()
-                                                .frame(width: 40)
-                                            VStack{
-                                                Text("Stats:")
-                                                    .offset(y:-10)
-                                                Text("Overall: \(gameVM.test3.team.record.items[0].summary)")
-                                                Text("Point Diff: \(gameVM.test3.team.record.items[0].stats[5].value, specifier: "%.1f")")
+                                            Text(gameVM.test3.team.nextEvent[0].competitions[0].status.type.shortDetail)
+                                                .padding(.top, 5)
+                                            HStack {
+                                                if (gameVM.test3.team.nextEvent[0].competitions[0].competitors[0].id == gameVM.test3.team.id){
+                                                    Text("VS \(gameVM.test3.team.nextEvent[0].competitions[0].competitors[1].team.location)")
+                                                    AsyncImage(url: URL(string: gameVM.test3.team.nextEvent[0].competitions[0].competitors[1].team.logos[0].href), content: { returnedImage in
+                                                        returnedImage
+                                                            .resizable()
+                                                            .frame(width: 32, height: 32)
+                                                    }, placeholder: {
+                                                        ProgressView()
+                                                    })
+                                                } else {
+                                                    Text("@ \(gameVM.test3.team.nextEvent[0].competitions[0].competitors[0].team.location)")
+                                                    AsyncImage(url: URL(string: gameVM.test3.team.nextEvent[0].competitions[0].competitors[0].team.logos[0].href), content: { returnedImage in
+                                                        returnedImage
+                                                            .resizable()
+                                                            .frame(width: 32, height: 32)
+                                                    }, placeholder: {
+                                                        ProgressView()
+                                                    })
+                                                }
                                             }
                                         }
+                                        Spacer()
+                                            .frame(width: 40)
+                                        VStack{
+                                            Text("Stats:")
+                                                .offset(y:-10)
+                                            Text("Overall: \(gameVM.test3.team.record.items[0].summary)")
+                                            Text("Point Diff: \(gameVM.test3.team.record.items[0].stats[5].value, specifier: "%.1f")")
+                                        }
                                     }
-                            
                                 }
+                                
+                            }
+                            //}
                         }
+                        .foregroundColor(.primary)
                     }
                     Spacer()
                         .frame(height: 40)
@@ -250,9 +263,14 @@ struct HomeView: View {
                 gameVM.getJsonData(api: "https://v2.nba.api-sports.io/standings?league=standard&season=2023", whichapi: 0)
             }
             .onAppear {
-                //gameVM.getJsonData(api: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard", whichapi: 4)
+                if (SwiftDataFavNBA.count > 0) {
+                    gameVM.getJsonData(api: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/\(SwiftDataFavNBA.last?.codename ?? "")", whichapi: 3)
+                }
             }
-
+            .navigationTitle("Basketball 🏀")
+            .navigationDestination(for: NBATeamResponse.self) { value in
+                Text("another screen")
+            }
         }
         
     }

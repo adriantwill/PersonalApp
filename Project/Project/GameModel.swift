@@ -181,11 +181,11 @@ class SwiftDataNBATeam {
     }
 }
 
-struct NBATeamResponse: Codable {
+struct NBATeamResponse: Codable, Hashable {
     let team: Team
 }
 
-struct Team: Codable {
+struct Team: Codable, Hashable {
     let id: String
     let uid: String
     let slug: String
@@ -203,7 +203,7 @@ struct Team: Codable {
     let standingSummary: String
 }
 
-struct Logo: Codable {
+struct Logo: Codable, Hashable {
     let href: String
     let width: Int
     let height: Int
@@ -212,23 +212,23 @@ struct Logo: Codable {
     let lastUpdated: String
 }
 
-struct Record: Codable {
+struct Record: Codable, Hashable {
     let items: [RecordItem]
 }
 
-struct RecordItem: Codable {
+struct RecordItem: Codable, Hashable {
     let description: String
     let type: String
     let summary: String
     let stats: [Stat]
 }
 
-struct Stat: Codable {
+struct Stat: Codable, Hashable {
     let name: String
     let value: Double
 }
 
-struct NextEvent: Codable {
+struct NextEvent: Codable, Hashable {
     let id: String
     let date: String
     let name: String
@@ -239,19 +239,19 @@ struct NextEvent: Codable {
     let competitions: [Competition]
 }
 
-struct Season: Codable {
+struct Season: Codable, Hashable {
     let year: Int
     let displayName: String
 }
 
-struct SeasonType: Codable {
+struct SeasonType: Codable, Hashable {
     let id: String
     let type: Int
     let name: String
     let abbreviation: String
 }
 
-struct Competition: Codable {
+struct Competition: Codable, Hashable {
     let id: String
     let date: String
     let attendance: Int
@@ -267,7 +267,7 @@ struct Competition: Codable {
     let status: Status
 }
 
-struct CompetitionType: Codable {
+struct CompetitionType: Codable, Hashable {
     let id: String
     let text: String
     let abbreviation: String
@@ -275,7 +275,7 @@ struct CompetitionType: Codable {
     let type: String
 }
 
-struct Competitor: Codable {
+struct Competitor: Codable, Hashable {
     let id: String
     let type: String
     let order: Int
@@ -285,7 +285,7 @@ struct Competitor: Codable {
     let record: [Records]?
 }
 
-struct CompetitorTeam: Codable {
+struct CompetitorTeam: Codable, Hashable {
     let id: String
     let location: String
     let abbreviation: String
@@ -294,12 +294,12 @@ struct CompetitorTeam: Codable {
     let logos: [Logo]
 }
 
-struct Score: Codable {
+struct Score: Codable, Hashable {
     let value: Double
     let displayValue: String
 }
 
-struct Records: Codable {
+struct Records: Codable, Hashable {
     let id: String
     let abbreviation: String?
     let displayName: String
@@ -309,12 +309,12 @@ struct Records: Codable {
     let displayValue: String
 }
 
-struct Note: Codable {
+struct Note: Codable, Hashable {
     let type: String
     let headline: String
 }
 
-struct Broadcast: Codable {
+struct Broadcast: Codable, Hashable {
     let type: BroadcastType
     let market: Market
     let media: Media
@@ -322,21 +322,21 @@ struct Broadcast: Codable {
     let region: String
 }
 
-struct BroadcastType: Codable {
+struct BroadcastType: Codable, Hashable {
     let id: String
     let shortName: String
 }
 
-struct Market: Codable {
+struct Market: Codable, Hashable {
     let id: String
     let type: String
 }
 
-struct Media: Codable {
+struct Media: Codable, Hashable {
     let shortName: String
 }
 
-struct Ticket: Codable {
+struct Ticket: Codable, Hashable {
     let id: String
     let summary: String
     let description: String
@@ -346,14 +346,14 @@ struct Ticket: Codable {
     let totalPostings: Int
 }
 
-struct Status: Codable {
+struct Status: Codable, Hashable {
     let clock: Double
     let displayClock: String
     let period: Int
     let type: StatusType
 }
 
-struct StatusType: Codable {
+struct StatusType: Codable, Hashable {
     let id: String
     let name: String
     let state: String
