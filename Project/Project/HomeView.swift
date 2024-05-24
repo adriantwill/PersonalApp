@@ -27,43 +27,44 @@ struct HomeView: View {
                         HStack {
                             ForEach(gameVM.test4.events, id: \.self) { index in
                                 NavigationLink(value: index) {
-                                ZStack{
-                                    Rectangle ()
-                                        .fill(Color.white)
-                                        .frame(width: 170, height: 120)
-                                        .cornerRadius(10)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .stroke(Color.black, lineWidth: 0.5)
-                                        )
-                                        .shadow(color: Color.black.opacity(0.3), radius: 3, x: 2, y: 4)
-                                        .padding(10)
-                                    VStack(spacing: 0) {
-                                        Text("\(index.status.type.shortDetail)")
-                                            .font(.body)
-                                            .padding(.bottom, 10)
-                                        HStack {
-                                            Image("\(index.competitions[0].competitors[0].team.displayName)") // Replace with your image name
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: 32, height: 32)
-                                            Text("\(index.competitions[0].competitors[0].team.abbreviation)")
-                                                .padding(.trailing, 10)
-                                            Text("\(index.competitions[0].competitors[0].score)")
+                                    ZStack{
+                                        Rectangle ()
+                                            .fill(Color.white)
+                                            .frame(width: 170, height: 120)
+                                            .cornerRadius(10)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .stroke(Color.black, lineWidth: 0.5)
+                                            )
+                                            .shadow(color: Color.black.opacity(0.3), radius: 3, x: 2, y: 4)
+                                            .padding(10)
+                                        VStack(spacing: 0) {
+                                            Text("\(index.status.type.shortDetail)")
+                                                .font(.body)
+                                                .padding(.bottom, 10)
+                                            HStack {
+                                                Image("\(index.competitions[0].competitors[0].team.displayName)") // Replace with your image name
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(width: 32, height: 32)
+                                                Text("\(index.competitions[0].competitors[0].team.abbreviation)")
+                                                    .padding(.trailing, 10)
+                                                Text("\(index.competitions[0].competitors[0].score)")
+                                            }
+                                            HStack {
+                                                Image("\(index.competitions[0].competitors[1].team.displayName)") // Replace with your image name
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(width: 32, height: 32)
+                                                Text("\(index.competitions[0].competitors[1].team.abbreviation)")
+                                                    .padding(.trailing, 10)
+                                                Text("\(index.competitions[0].competitors[1].score)")
+                                            }
                                         }
-                                        HStack {
-                                            Image("\(index.competitions[0].competitors[1].team.displayName)") // Replace with your image name
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: 32, height: 32)
-                                            Text("\(index.competitions[0].competitors[1].team.abbreviation)")
-                                                .padding(.trailing, 10)
-                                            Text("\(index.competitions[0].competitors[1].score)")
-                                        }
+                                        
                                     }
-                                    
+                                    .foregroundColor(.primary)
                                 }
-                            }
                                 }
                                 
                             }
@@ -270,10 +271,10 @@ struct HomeView: View {
             }
             .navigationTitle("Basketball 🏀")
             .navigationDestination(for: NBATeamResponse.self) { value in
-                Text("another screen")
+                Text("\(value.team.name)")
             }
             .navigationDestination(for: EventEvent.self) { value in
-                Text("diff screen")
+                CurrentGameView(value: value)
             }
         }
         
