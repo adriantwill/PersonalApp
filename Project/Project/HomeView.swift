@@ -26,6 +26,7 @@ struct HomeView: View {
                     ScrollView(.horizontal, content: {
                         HStack {
                             ForEach(gameVM.test4.events, id: \.self) { index in
+                                NavigationLink(value: index) {
                                 ZStack{
                                     Rectangle ()
                                         .fill(Color.white)
@@ -62,6 +63,7 @@ struct HomeView: View {
                                     }
                                     
                                 }
+                            }
                                 }
                                 
                             }
@@ -102,7 +104,6 @@ struct HomeView: View {
                                 .frame(width: 350, height: 40)
                                 .padding(.bottom, 120)
                                 .cornerRadius(10)
-                            
                             
                             VStack {
                                 HStack {
@@ -270,6 +271,9 @@ struct HomeView: View {
             .navigationTitle("Basketball 🏀")
             .navigationDestination(for: NBATeamResponse.self) { value in
                 Text("another screen")
+            }
+            .navigationDestination(for: EventEvent.self) { value in
+                Text("diff screen")
             }
         }
         
