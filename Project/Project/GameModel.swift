@@ -109,78 +109,77 @@ struct nflteam: Decodable, Hashable{
     var name: String
 }
 
-//NBA RANKINGS API SPORTS
-
-struct NBAStandings: Codable, Hashable {
-    let get: String
-    let parameters: Parameters
-    let errors: [String]
-    let results: Int
-    let response: [TeamResponse]
-}
-
-struct Parameters: Codable, Hashable {
-    let league: String
-    let season: String
-}
-
-struct TeamResponse: Codable, Hashable {
-    let league: String
-    let season: Int
-    let team: NBATeamRankings
-    let conference: Conference
-    let division: Division
-    let win: NBARecordRankings
-    let loss: NBARecordRankings
-    let gamesBehind: String?
-    let streak: Int
-    let winStreak: Bool
-    let tieBreakerPoints: Int?
-}
-
-struct NBATeamRankings: Codable, Hashable {
-    let id: Int
+//ESPN RANKINGS API SPORTS
+struct NBARankings: Codable, Hashable {
+    let uid: String
+    let id: String
     let name: String
-    let nickname: String
-    let code: String
-    let logo: String
+    let abbreviation: String
+    let shortName: String
+    let children: [Conference]
 }
 
 struct Conference: Codable, Hashable {
+    let uid: String
+    let id: String
     let name: String
-    let rank: Int
-    let win: Int
-    let loss: Int
+    let abbreviation: String
+    let standings: Standings
 }
 
-struct Division: Codable, Hashable {
+struct Standings: Codable, Hashable {
+    let id: String
     let name: String
-    let rank: Int
-    let win: Int
-    let loss: Int
-    let gamesBehind: String?
+    let displayName: String
+    let links: [Link]
+    let season: Int
+    let seasonType: Int
+    let seasonDisplayName: String
+    let entries: [Entry]
 }
 
-struct NBARecordRankings: Codable, Hashable {
-    let home: Int
-    let away: Int
-    let total: Int
-    let percentage: String
-    let lastTen: Int
+struct Link: Codable, Hashable {
+    let language: String
+    let rel: [String]
+    let href: String
+    let text: String
+    let shortText: String
+    let isExternal: Bool
+    let isPremium: Bool
+}
+
+struct Entry: Codable, Hashable {
+    let team: TeamRankings
+    let stats: [StatRankings]
+}
+
+struct TeamRankings: Codable, Hashable {
+    let id: String
+    let uid: String
+    let location: String
+    let name: String
+    let abbreviation: String
+    let displayName: String
+    let shortDisplayName: String
+    let isActive: Bool
+    let logos: [Logo]
+    let links: [Link]
+}
+
+struct StatRankings: Codable, Hashable {
+    let name: String
+    let displayName: String
+    let shortDisplayName: String
+    let description: String
+    let abbreviation: String?
+    let type: String
+    let value: Double?
+    let displayValue: String
+    let id: String?
+    let summary: String?
 }
 
 //ESPN NBA TEAM API
-
-@Model
-class SwiftDataNBATeam {
-    @Attribute(.unique) var iden: Int
-    var codename: String
-    init(iden: Int, codename: String) {
-        self.iden = iden
-        self.codename = codename
-    }
-}
-
 struct NBATeamResponse: Codable, Hashable {
     let team: Team
 }
@@ -364,7 +363,6 @@ struct StatusType: Codable, Hashable {
 }
 
 //ESPN SCHEDULED API
-
 // Root struct
 struct NBADataEvent: Codable, Hashable {
     let leagues: [LeagueEvent]

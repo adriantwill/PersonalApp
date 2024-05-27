@@ -14,14 +14,15 @@ import SwiftUI
 class GameViewModel: ObservableObject{
     @Published var searchCity = "Seattle"
     @Published var searchText = ""
-    @Published var test0: NBAStandings
+    @Published var test0: NBARankings
     @Published var test1: nflstandings
     @Published var test2: [nfldraft]
     @Published var test3: NBATeamResponse
     @Published var test4: NBADataEvent
     @Published var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @Published var stadiums = maplocations()
-
+    @AppStorage("lastFetched") var lastFetched: Double = Date.now.timeIntervalSince1970
+    
     @Published var nbateam = [
         TeamInfo(name: "Atlanta Hawks", code: "ATL", nickname: "Hawks", id: 1),
         TeamInfo(name: "Boston Celtics", code: "BOS", nickname: "Celtics", id: 2),
@@ -54,7 +55,7 @@ class GameViewModel: ObservableObject{
         TeamInfo(name: "Utah Jazz", code: "UTH", nickname: "Jazz", id: 40),
         TeamInfo(name: "Washington Wizards", code: "WAS", nickname: "Wizards", id: 41)
     ]
-
+    
     @Published var nflteams = [
         "Arizona Cardinals",
         "Atlanta Falcons",
@@ -91,32 +92,29 @@ class GameViewModel: ObservableObject{
     ]
     init()
     {
-        test0 = NBAStandings(get: "", parameters: Parameters(league: "", season: ""), errors: [], results: 0, response: [])
+        test0 = NBARankings(uid: "", id: "", name: "", abbreviation: "", shortName: "", children: [])
         test1 = nflstandings(results: 0, response: [])
         test2 = []
-      //  test3 = NBATeamResponse(team: Team(id: "", uid: "", slug: "", location: "", name: "", abbreviation: "", displayName: "", shortDisplayName: "", color: "", alternateColor: "", isActive: true, logos: [], record: Record(items: []), nextEvent: [], standingSummary: ""))
+        //  test3 = NBATeamResponse(team: Team(id: "", uid: "", slug: "", location: "", name: "", abbreviation: "", displayName: "", shortDisplayName: "", color: "", alternateColor: "", isActive: true, logos: [], record: Record(items: []), nextEvent: [], standingSummary: ""))
         test3 = NBATeamResponse(team: Team(id: "", uid: "", slug: "", location: "", name: "", abbreviation: "", displayName: "Chicago Bulls", shortDisplayName: "", color: "0e2240", alternateColor: "fec524",  isActive: true, logos: [Logo(href: "https://a.espncdn.com/i/teamlogos/nba/500/den.png", width: 0, height: 0, alt: "", rel: [], lastUpdated: "")], record: Record(items: [RecordItem(description: "", type: "", summary: "57-25", stats: [Stat(name: "", value: 0.0), Stat(name: "", value: 0.0), Stat(name: "", value: 109.597565), Stat(name: "", value: 114.85366), Stat(name: "", value: 0.0), Stat(name: "", value: 5.300000000000011)])]), nextEvent: [NextEvent(id: "", date: "2024-05-20T00:00Z", name: "", shortName: "", season: Season(year: 0, displayName: ""), seasonType: SeasonType(id: "", type: 0, name: "", abbreviation: ""), timeValid: true, competitions: [Competition(id: "", date: "", attendance: 0, type: CompetitionType(id: "", text: "", abbreviation: "", slug: "", type: ""), timeValid: true, neutralSite: true, boxscoreAvailable: true, ticketsAvailable: true, competitors: [Competitor(id: "", type: "", order: 0, homeAway: "away", team: CompetitorTeam(id: "", location: "Minnesota", abbreviation: "MIA", displayName: "Miami Heat", shortDisplayName: "MIA", logos: [Logo(href: "https://a.espncdn.com/i/teamlogos/nba/500/den.png", width: 0, height: 0, alt: "", rel: [], lastUpdated: "")]), score: Score(value: 0.0, displayValue: "100"), record: []), Competitor(id: "", type: "", order: 0, homeAway: "away", team: CompetitorTeam(id: "", location: "Minnesota", abbreviation: "CHI", displayName: "Chicago Bulls", shortDisplayName: "Timberwolves", logos: [Logo(href: "https://a.espncdn.com/i/teamlogos/nba/500/den.png", width: 0, height: 0, alt: "", rel: [], lastUpdated: "")]), score: Score(value: 0.0, displayValue: "110"), record: [])], notes: [], broadcasts: [], tickets: [], status: Status(clock: 0.0, displayClock: "", period: 0, type: StatusType(id: "", name: "", state: "", completed: true, description: "", detail: "", shortDetail: "5/19 - 8:00 PM EDT")))])], standingSummary: ""))
-        //test4 = NBADataEvent(leagues: [], season: SeasonEvent(type: 0, year: 0), day: DayEvent(date: ""), events: [])
-        test4 = NBADataEvent(leagues: [], season: SeasonEvent(type: 0, year: 0), day: DayEvent(date: ""), events: [EventEvent(id: "", uid: "", date: "", name: "", shortName: "", season: EventSeasonEvent(year: 0, type: 0, slug: ""), competitions: [CompetitionEvent(id: "", uid: "", date: "", attendance: 0, type: CompetitionTypeEvent(id: "", abbreviation: ""), timeValid: true, neutralSite: true, conferenceCompetition: true, playByPlayAvailable: true, recent: true, venue: VenueEvent(id: "", fullName: "", address: AddressEvent(city: "", state: ""), indoor: true), competitors: [CompetitorEvent(id: "", uid: "", type: "", order: 0, homeAway: "", team: TeamEvent(id: "", uid: "", location: "", name: "Dallas Mavericks", abbreviation: "DAL", displayName: "Dallas Mavericks", shortDisplayName: "DAL", color: "", alternateColor: "", isActive: true, venue: VenueIDEvent(id: ""), logo: ""), score: "100", statistics: [], records: [], leaders: []), CompetitorEvent(id: "", uid: "", type: "", order: 0, homeAway: "", team: TeamEvent(id: "", uid: "", location: "", name: "Dallas Mavericks", abbreviation: "MIL", displayName: "Milwaukee Bucks", shortDisplayName: "MIL", color: "", alternateColor: "", isActive: true, venue: VenueIDEvent(id: ""), logo: ""), score: "100", statistics: [], records: [], leaders: [])], notes: [], status: StatusEvent(clock: 0, displayClock: "", period: 0, type: StatusTypeEvent(id: "", name: "", state: "", completed: true, description: "", detail: "", shortDetail: "Done")), broadcasts: [], format: FormatEvent(regulation: RegulationEvent(periods: 0)), tickets: [], startDate: "", series: SeriesEvent(type: "", title: "", summary: "", completed: true, totalCompetitions: 0, competitors: []), odds: [])], status: StatusEvent(clock: 0, displayClock: "", period: 0, type: StatusTypeEvent(id: "", name: "", state: "", completed: true, description: "", detail: "", shortDetail: "Done")))])
+        test4 = NBADataEvent(leagues: [], season: SeasonEvent(type: 0, year: 0), day: DayEvent(date: ""), events: [])
+        //test4 = NBADataEvent(leagues: [], season: SeasonEvent(type: 0, year: 0), day: DayEvent(date: ""), events: [EventEvent(id: "", uid: "", date: "", name: "", shortName: "", season: EventSeasonEvent(year: 0, type: 0, slug: ""), competitions: [CompetitionEvent(id: "", uid: "", date: "", attendance: 0, type: CompetitionTypeEvent(id: "", abbreviation: ""), timeValid: true, neutralSite: true, conferenceCompetition: true, playByPlayAvailable: true, recent: true, venue: VenueEvent(id: "", fullName: "", address: AddressEvent(city: "", state: ""), indoor: true), competitors: [CompetitorEvent(id: "", uid: "", type: "", order: 0, homeAway: "", team: TeamEvent(id: "", uid: "", location: "", name: "Dallas Mavericks", abbreviation: "DAL", displayName: "Dallas Mavericks", shortDisplayName: "DAL", color: "", alternateColor: "", isActive: true, venue: VenueIDEvent(id: ""), logo: ""), score: "100", statistics: [], records: [], leaders: []), CompetitorEvent(id: "", uid: "", type: "", order: 0, homeAway: "", team: TeamEvent(id: "", uid: "", location: "", name: "Dallas Mavericks", abbreviation: "MIL", displayName: "Milwaukee Bucks", shortDisplayName: "MIL", color: "", alternateColor: "", isActive: true, venue: VenueIDEvent(id: ""), logo: ""), score: "100", statistics: [], records: [], leaders: [])], notes: [], status: StatusEvent(clock: 0, displayClock: "", period: 0, type: StatusTypeEvent(id: "", name: "", state: "", completed: true, description: "", detail: "", shortDetail: "Done")), broadcasts: [], format: FormatEvent(regulation: RegulationEvent(periods: 0)), tickets: [], startDate: "", series: SeriesEvent(type: "", title: "", summary: "", completed: true, totalCompetitions: 0, competitors: []), odds: [])], status: StatusEvent(clock: 0, displayClock: "", period: 0, type: StatusTypeEvent(id: "", name: "", state: "", completed: true, description: "", detail: "", shortDetail: "Done")))])
         
     }
-
+    
     func getJsonData(api: String, whichapi: Int) {
         
         let semaphore = DispatchSemaphore (value: 0)
-
+        
         var request = URLRequest(url: URL(string: api)!,timeoutInterval: Double.infinity)
         
-        if whichapi == 0{
-            request.addValue(Secrets.apisportsio, forHTTPHeaderField: "x-rapidapi-key")
-            request.addValue("v2.nba.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
-        } else if whichapi == 1 {
+        if whichapi == 1 {
             request.addValue(Secrets.apisportsio, forHTTPHeaderField: "x-rapidapi-key")
             request.addValue("v1.american-football.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
         }
-    
+        
         request.httpMethod = "GET"
-
+        
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("Error making request: \(error.localizedDescription)")
@@ -129,7 +127,7 @@ class GameViewModel: ObservableObject{
             }
             do {
                 if whichapi == 0{
-                    let decodedData = try JSONDecoder().decode(NBAStandings.self, from: data)
+                    let decodedData = try JSONDecoder().decode(NBARankings.self, from: data)
                     DispatchQueue.main.async {
                         self.test0 = decodedData
                     }
@@ -149,24 +147,25 @@ class GameViewModel: ObservableObject{
                     }
                 }
                 else if whichapi == 4{
-                   let decodedData = try JSONDecoder().decode(NBADataEvent.self, from: data)
-                   DispatchQueue.main.async {
-                       self.test4 = decodedData
-                   }
+                    let decodedData = try JSONDecoder().decode(NBADataEvent.self, from: data)
+                    DispatchQueue.main.async {
+                        self.test4 = decodedData
+                    }
                 } else{
                     print("major error")
                 }
             } catch {
                 print("error: \(error)")
             }
-          //print(String(data: data, encoding: .utf8)!)
-          semaphore.signal()
+            //print(String(data: data, encoding: .utf8)!)
+            semaphore.signal()
         }
-
+        
         task.resume()
         semaphore.wait()
+        lastFetched = Date.now.timeIntervalSince1970
     }
-       
+    
     func getDate() -> String{
         let currentDate = Date()
         let dateFormatter = DateFormatter()
@@ -174,31 +173,26 @@ class GameViewModel: ObservableObject{
         return dateFormatter.string(from: currentDate)
     }
     
-    func convertUTCtoPacificTime(utcDate: String, long: String) -> String {
+    func convertUTCtoPacificTime(utcDate: String) -> String {
         // Create a DateFormatter to parse the UTC date string
-        if (long == "Scheduled" || long == "STATUS_SCHEDULED") {
-                // Define the input date format
-                let inputFormatter = DateFormatter()
-                inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mmZ"
-                inputFormatter.timeZone = TimeZone(abbreviation: "UTC")
-                
-                // Convert the input date string to a Date object
-                guard let date = inputFormatter.date(from: utcDate) else {
-                    return "Invalid date"
-                }
-                
-                // Define the output date format
-                let outputFormatter = DateFormatter()
-                outputFormatter.dateFormat = "MMM d h:mma 'PST'"
-                outputFormatter.timeZone = TimeZone(identifier: "America/Los_Angeles")
-                
-                // Convert the Date object to the desired output format
-                return outputFormatter.string(from: date)
-        } else if (long == "Finished" || long == "STATUS_FINAL") {
-            return "Finished"
-        } else {
-            return "Live"
-        }
+        
+            // Define the input date format
+            let inputFormatter = DateFormatter()
+            inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mmZ"
+            inputFormatter.timeZone = TimeZone(abbreviation: "UTC")
+            
+            // Convert the input date string to a Date object
+            guard let date = inputFormatter.date(from: utcDate) else {
+                return "Invalid date"
+            }
+            
+            // Define the output date format
+            let outputFormatter = DateFormatter()
+            outputFormatter.dateFormat = "MMM d"
+            
+            // Convert the Date object to the desired output format
+            return outputFormatter.string(from: date)
+       
     }
     
     func convertDateString(_ input: String) -> String {
@@ -221,7 +215,18 @@ class GameViewModel: ObservableObject{
         }
         return -1
     }
+    
+    func hasExceededLimit() -> Bool {
+        let timeLimit = 300 // 5 mins
+        let currentTime = Date.now
+        let lastFetchedTime = Date(timeIntervalSince1970: lastFetched)
+        guard let differenceInMins = Calendar.current.dateComponents([.second], from: lastFetchedTime, to: currentTime) .second else {
+            return false
+        }
+        return differenceInMins >= timeLimit
+    }
 }
+
 
 extension Color {
     init(hex: String) {
@@ -244,4 +249,3 @@ extension Color {
         }
     }
 }
-        

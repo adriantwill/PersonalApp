@@ -20,11 +20,11 @@ struct ContentView: View {
                 }
             GamesView()
                 .tabItem{
-                    Image(systemName: "sportscourt.fill")
+                    Image(systemName: "person.3.fill")
                 }
             DraftView()
                 .tabItem {
-                    Image(systemName: "list.bullet.clipboard.fill")
+                    Image(systemName: "person.fill")
                 }
         }
     }
