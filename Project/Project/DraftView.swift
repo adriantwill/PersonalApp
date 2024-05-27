@@ -38,7 +38,7 @@ struct DraftView: View {
             }
         }
         .refreshable {
-            gameVM.getJsonData(api: "https://api.collegefootballdata.com/draft/picks?year=2024", whichapi: 2)
+            await gameVM.getJsonData(api: "https://api.collegefootballdata.com/draft/picks?year=2024", whichapi: 2)
             let swiftdraftnfl = gameVM.test2.map{ swiftnfldraft(from: $0)}
             swiftdraftnfl.forEach{context.insert($0)}
         }
@@ -47,5 +47,5 @@ struct DraftView: View {
 
 #Preview {
     DraftView()
-        .modelContainer(for: [swiftnflresponse.self, swiftnfldraft.self])
+        .modelContainer(for: [swiftnfldraft.self])
 }

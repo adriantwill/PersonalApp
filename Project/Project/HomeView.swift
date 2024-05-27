@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @ObservedObject var gameVM = GameViewModel()
+    @EnvironmentObject var gameVM: GameViewModel
     @AppStorage("FavTeam") var favTeam: String = ""
     var body: some View {
         NavigationStack {
@@ -17,13 +17,13 @@ struct HomeView: View {
                     Text("Games Today:")
                         .bold()
                         .font(.title2)
-                    if (gameVM.test4.events.count == 0){
+                    if (gameVM.nbacurrentevents.events.count == 0){
                         Text("No Games Today")
                             .padding(20)
                     } else {
                         ScrollView(.horizontal, content: {
                             HStack {
-                                ForEach(gameVM.test4.events, id: \.self) { index in
+                                ForEach(gameVM.nbacurrentevents.events, id: \.self) { index in
                                     NavigationLink(value: index) {
                                         ZStack{
                                             Rectangle ()
@@ -35,28 +35,21 @@ struct HomeView: View {
                                                         .stroke(Color.black, lineWidth: 0.5)
                                                 )
                                                 .shadow(color: Color.black.opacity(0.3), radius: 3, x: 2, y: 4)
-                                                .padding(10)
+                                                
                                             VStack(spacing: 0) {
                                                 Text("\(index.status.type.shortDetail)")
                                                     .font(.body)
                                                     .padding(.bottom, 10)
-                                                HStack {
-                                                    Image("\(index.competitions[0].competitors[0].team.displayName)") // Replace with your image name
-                                                        .resizable()
-                                                        .aspectRatio(contentMode: .fit)
-                                                        .frame(width: 32, height: 32)
-                                                    Text("\(index.competitions[0].competitors[0].team.abbreviation)")
-                                                        .padding(.trailing, 10)
-                                                    Text("\(index.competitions[0].competitors[0].score)")
-                                                }
-                                                HStack {
-                                                    Image("\(index.competitions[0].competitors[1].team.displayName)") // Replace with your image name
-                                                        .resizable()
-                                                        .aspectRatio(contentMode: .fit)
-                                                        .frame(width: 32, height: 32)
-                                                    Text("\(index.competitions[0].competitors[1].team.abbreviation)")
-                                                        .padding(.trailing, 10)
-                                                    Text("\(index.competitions[0].competitors[1].score)")
+                                                ForEach(index.competitions[0].competitors, id: \.self){ comp in
+                                                    HStack {
+                                                        Image("\(comp.team.displayName)") // Replace with your image name
+                                                            .resizable()
+                                                            .aspectRatio(contentMode: .fit)
+                                                            .frame(width: 32, height: 32)
+                                                        Text("\(comp.team.abbreviation)")
+                                                            .padding(.trailing, 10)
+                                                        Text("\(comp.score)")
+                                                    }
                                                 }
                                             }
                                             
@@ -77,33 +70,33 @@ struct HomeView: View {
                         Text("Select Favorite Team Above")
                             .padding(20)
                     } else {
-                        NavigationLink(value: gameVM.test3.team) {
+                        NavigationLink(value: gameVM.nbasingleteam.team) {
                             ZStack{
                                 Rectangle ()
                                     .fill(Color.white)
-                                    .frame(width: 350, height: 130)
+                                    .frame(width: 350, height: 140)
                                     .cornerRadius(10)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10) // Ensures the stroke also has rounded corners
                                             .stroke(Color.black, lineWidth: 0.5) // Black stroke
                                     )
                                     .shadow(color: Color.black.opacity(0.3), radius: 3, x: 2, y: 4)
-                                    .padding(10)
+                                    
                                 
                                 
                                 Rectangle()
-                                    .fill(Color(hex: "#\(gameVM.test3.team.color)"))
+                                    .fill(Color(hex: "#\(gameVM.nbasingleteam.team.color)"))
                                     .frame(width: 350, height: 40)
-                                    .padding(.bottom, 120)
+                                    .padding(.bottom, 100)
                                     .cornerRadius(10)
                                 
                                 VStack {
                                     HStack {
-                                        Text(gameVM.test3.team.displayName)
-                                            .foregroundStyle(Color(hex: "#\(gameVM.test3.team.alternateColor)"))
+                                        Text(gameVM.nbasingleteam.team.displayName)
+                                            .foregroundStyle(Color(hex: "#\(gameVM.nbasingleteam.team.alternateColor)"))
                                             .bold()
                                             .font(.title3)
-                                        AsyncImage(url: URL(string: gameVM.test3.team.logos[0].href), content: { returnedImage in
+                                        AsyncImage(url: URL(string: gameVM.nbasingleteam.team.logos[0].href), content: { returnedImage in
                                             returnedImage
                                                 .resizable()
                                                 .frame(width: 30, height: 30)
@@ -112,15 +105,15 @@ struct HomeView: View {
                                             ProgressView()
                                         })
                                     }
-                                    .offset(y:-18)
-                                    VStack {
+                                    .offset(y:-3)
+                                    
                                         HStack {
                                             VStack(spacing: 0) {
-                                                if (gameVM.test3.team.nextEvent[0].competitions[0].status.type.name == "STATUS_FINAL"){
+                                                if (gameVM.nbasingleteam.team.nextEvent[0].competitions[0].status.type.name == "STATUS_FINAL"){
                                                     Text("Last Event:")
                                                         .offset(y:-5)
                                                         .bold()
-                                                } else if (gameVM.test3.team.nextEvent[0].competitions[0].status.type.name == "STATUS_SCHEDULED"){
+                                                } else if (gameVM.nbasingleteam.team.nextEvent[0].competitions[0].status.type.name == "STATUS_SCHEDULED"){
                                                     Text("Upcoming Event:")
                                                         .offset(y:-5)
                                                         .bold()
@@ -130,12 +123,12 @@ struct HomeView: View {
                                                         .foregroundColor(.red)
                                                         .bold()
                                                 }
-                                                Text(gameVM.test3.team.nextEvent[0].competitions[0].status.type.shortDetail)
+                                                Text(gameVM.nbasingleteam.team.nextEvent[0].competitions[0].status.type.shortDetail)
                                                     .padding(.top, 5)
                                                 HStack {
-                                                    if (gameVM.test3.team.nextEvent[0].competitions[0].competitors[0].id == gameVM.test3.team.id){
-                                                        Text("VS \(gameVM.test3.team.nextEvent[0].competitions[0].competitors[1].team.location)")
-                                                        AsyncImage(url: URL(string: gameVM.test3.team.nextEvent[0].competitions[0].competitors[1].team.logos[0].href), content: { returnedImage in
+                                                    if (gameVM.nbasingleteam.team.nextEvent[0].competitions[0].competitors[0].id == gameVM.nbasingleteam.team.id){
+                                                        Text("VS \(gameVM.nbasingleteam.team.nextEvent[0].competitions[0].competitors[1].team.location)")
+                                                        AsyncImage(url: URL(string: gameVM.nbasingleteam.team.nextEvent[0].competitions[0].competitors[1].team.logos[0].href), content: { returnedImage in
                                                             returnedImage
                                                                 .resizable()
                                                                 .frame(width: 32, height: 32)
@@ -143,8 +136,8 @@ struct HomeView: View {
                                                             ProgressView()
                                                         })
                                                     } else {
-                                                        Text("@ \(gameVM.test3.team.nextEvent[0].competitions[0].competitors[0].team.location)")
-                                                        AsyncImage(url: URL(string: gameVM.test3.team.nextEvent[0].competitions[0].competitors[0].team.logos[0].href), content: { returnedImage in
+                                                        Text("@ \(gameVM.nbasingleteam.team.nextEvent[0].competitions[0].competitors[0].team.location)")
+                                                        AsyncImage(url: URL(string: gameVM.nbasingleteam.team.nextEvent[0].competitions[0].competitors[0].team.logos[0].href), content: { returnedImage in
                                                             returnedImage
                                                                 .resizable()
                                                                 .frame(width: 32, height: 32)
@@ -160,11 +153,11 @@ struct HomeView: View {
                                                 Text("Stats:")
                                                     .offset(y:-10)
                                                     .bold()
-                                                Text("Overall: \(gameVM.test3.team.record.items[0].summary)")
-                                                Text("Point Diff: \(gameVM.test3.team.record.items[0].stats[5].value, specifier: "%.1f")")
+                                                Text("Overall: \(gameVM.nbasingleteam.team.record.items[0].summary)")
+                                                Text("Point Diff: \(gameVM.nbasingleteam.team.record.items[0].stats[5].value, specifier: "%.1f")")
                                             }
                                         }
-                                    }
+                                        .padding(.top, 4)
                                     
                                 }
                                 
@@ -178,8 +171,7 @@ struct HomeView: View {
                         .bold()
                         .font(.title2)
                     Spacer()
-                    if (gameVM.test0.children.count == 0){
-                       Text("Please Refresh")
+                    if (gameVM.nbarankings.children.count == 0){
                     } else {
                     ZStack{
                         Rectangle ()
@@ -195,45 +187,27 @@ struct HomeView: View {
                         
                         ScrollView(.vertical) {
                             HStack {
-                                VStack {
-                                    Text("West")
-                                        .font(.title3)
-                                        .frame(maxWidth: 200)
-                                        .fontWeight(.semibold)
-                                    ForEach(gameVM.test0.children[1].standings.entries.sorted(by: {
-                                      ($0.stats[8].value ?? 0) < ($1.stats[8].value ?? 0)
-                                    }), id: \.self) { index in
-                                        HStack {
-                                            AsyncImage(url: URL(string: index.team.logos[0].href), content: { returnedImage in                             returnedImage
-                                                    .resizable()
-                                                    .frame(width: 32, height: 32)
-                                            }, placeholder: {
-                                                ProgressView()
-                                            })
-                                            Text("\(index.stats[8].value ?? 0, specifier: "%.0f").")
-                                            Text(index.team.abbreviation)
-                                             //   .frame(maxWidth: 190, alignment: .leading)
-                                        }
-                                    }
-                                }
-                                VStack {
-                                    Text("East")
-                                        .font(.title3)
-                                        .frame(maxWidth: 200)
-                                        .fontWeight(.semibold)
-                                    ForEach(gameVM.test0.children[0].standings.entries.sorted(by: {
-                                      ($0.stats[8].value ?? 0) < ($1.stats[8].value ?? 0)
-                                    }), id: \.self) { index in
-                                        HStack {
-                                            AsyncImage(url: URL(string: index.team.logos[0].href), content: { returnedImage in                             returnedImage
-                                                    .resizable()
-                                                    .frame(width: 32, height: 32)
-                                            }, placeholder: {
-                                                ProgressView()
-                                            })
-                                            Text("\(index.stats[8].value ?? 0, specifier: "%.0f").")
-                                            Text(index.team.abbreviation)
-                                              //  .frame(maxWidth: 190, alignment: .leading)
+                                ForEach(gameVM.nbarankings.children.reversed(), id: \.self) { conference in
+                                    VStack {
+                                        Text(conference.abbreviation)
+                                            .font(.title3)
+                                            .frame(maxWidth: 200)
+                                            .fontWeight(.semibold)
+                                        ForEach(conference.standings.entries.sorted(by: {
+                                          ($0.stats[8].value ?? 0) < ($1.stats[8].value ?? 0)
+                                        }), id: \.self) { index in
+                                            HStack {
+                                                AsyncImage(url: URL(string: index.team.logos[0].href), content: { returnedImage in                             returnedImage
+                                                        .resizable()
+                                                        .frame(width: 32, height: 32)
+                                                        .padding(.leading, 18)
+                                                }, placeholder: {
+                                                    ProgressView()
+                                                })
+                                                Text("\(index.stats[8].value ?? 0, specifier: "%.0f").")
+                                                Text(index.team.name)
+                                                    .frame(maxWidth: 190, alignment: .leading)
+                                            }
                                         }
                                     }
                                 }
@@ -252,7 +226,6 @@ struct HomeView: View {
                             ForEach(gameVM.nbateam, id: \.self) { option in
                                 Button(action: {
                                     favTeam = option.code
-                                    gameVM.getJsonData(api: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/\(option.code)", whichapi: 3)
                                 }) {
                                     Text(option.name)
                                 }
@@ -268,24 +241,24 @@ struct HomeView: View {
             }
             .refreshable {
                 
-                    gameVM.getJsonData(api: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard", whichapi: 4)
+                await gameVM.getJsonData(api: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard", whichapi: 4)
                 if (favTeam != "") {
-                    gameVM.getJsonData(api: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/\(favTeam)", whichapi: 3)
+                    await gameVM.getJsonData(api: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/\(favTeam)", whichapi: 3)
                 }
-                    gameVM.getJsonData(api: "https://site.web.api.espn.com/apis/v2/sports/basketball/nba/standings", whichapi: 0)
+                await gameVM.getJsonData(api: "https://site.web.api.espn.com/apis/v2/sports/basketball/nba/standings", whichapi: 0)
                 
             }
-            .onAppear {
+            .task {
                // if gameVM.hasExceededLimit(){
                     if (favTeam != "") {
-                        gameVM.getJsonData(api: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/\(favTeam)", whichapi: 3)
+                        await gameVM.getJsonData(api: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/\(favTeam)", whichapi: 3)
                     }
-                    gameVM.getJsonData(api: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard", whichapi: 4)
-                    gameVM.getJsonData(api: "https://site.web.api.espn.com/apis/v2/sports/basketball/nba/standings", whichapi: 0)
+                await gameVM.getJsonData(api: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard", whichapi: 4)
+                await gameVM.getJsonData(api: "https://site.web.api.espn.com/apis/v2/sports/basketball/nba/standings", whichapi: 0)
              //   }
             }
             .background(Color("Background"))
-            .navigationTitle("Basketball 🏀")
+            .navigationTitle("NBA")
             .navigationDestination(for: Team.self) { value in
                 FavoriteGameView(value: value)
             }
@@ -299,4 +272,5 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
+        .environmentObject(GameViewModel())
 }

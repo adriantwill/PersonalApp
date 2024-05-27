@@ -72,24 +72,6 @@ struct nfldraft: Decodable, Hashable {
 
 
 //NFL RANKINGS API
-@Model
-class swiftnflresponse {
-    var division: String
-    var position: Int
-    @Attribute(.unique) var team: String
-    var won: Int
-    var lost: Int
-    var ties: Int
-    init(from nflresponse: nflresponse) {
-        self.division = nflresponse.division
-        self.position = nflresponse.position
-        self.team = nflresponse.team.name
-        self.won = nflresponse.won
-        self.lost = nflresponse.lost
-        self.ties = nflresponse.ties
-    }
-}
-
 struct nflstandings: Decodable, Hashable {
     var results: Int
     var response: [nflresponse]

@@ -10,10 +10,12 @@ import SwiftData
 
 @main
 struct ProjectApp: App {
+    @StateObject var gameVM = GameViewModel()
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: [swiftnflresponse.self, swiftnfldraft.self])
+                .modelContainer(for: [swiftnfldraft.self])
+                .environmentObject(gameVM)
         }
     }
 }
