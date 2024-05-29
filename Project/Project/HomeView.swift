@@ -35,7 +35,7 @@ struct HomeView: View {
                                                         .stroke(Color.black, lineWidth: 0.5)
                                                 )
                                                 .shadow(color: Color.black.opacity(0.3), radius: 3, x: 2, y: 4)
-                                                
+                                                .padding(10)
                                             VStack(spacing: 0) {
                                                 Text("\(index.status.type.shortDetail)")
                                                     .font(.body)
@@ -81,7 +81,7 @@ struct HomeView: View {
                                             .stroke(Color.black, lineWidth: 0.5) // Black stroke
                                     )
                                     .shadow(color: Color.black.opacity(0.3), radius: 3, x: 2, y: 4)
-                                    
+                                    .padding(10)
                                 
                                 
                                 Rectangle()
@@ -257,7 +257,7 @@ struct HomeView: View {
                 await gameVM.getJsonData(api: "https://site.web.api.espn.com/apis/v2/sports/basketball/nba/standings", whichapi: 0)
              //   }
             }
-            .background(Color("Background"))
+        //    .background(Color("Background"))
             .navigationTitle("NBA")
             .navigationDestination(for: Team.self) { value in
                 FavoriteGameView(value: value)
