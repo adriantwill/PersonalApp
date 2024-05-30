@@ -257,7 +257,7 @@ struct HomeView: View {
                 await gameVM.getJsonData(api: "https://site.web.api.espn.com/apis/v2/sports/basketball/nba/standings", whichapi: 0)
              //   }
             }
-        //    .background(Color("Background"))
+            .background(Color("Background"))
             .navigationTitle("NBA")
             .navigationDestination(for: Team.self) { value in
                 FavoriteGameView(value: value)
